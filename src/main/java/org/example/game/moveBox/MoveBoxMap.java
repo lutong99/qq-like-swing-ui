@@ -3,7 +3,7 @@ package org.example.game.moveBox;
 /**
  * 推箱子的地图
  *
- * @author Lutong99
+ * @author 来源自网络
  */
 public class MoveBoxMap {
     private int data1[][] = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},

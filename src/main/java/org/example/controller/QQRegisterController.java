@@ -20,12 +20,12 @@ public class QQRegisterController extends QQController {
     /**
      * 锁
      */
-    private static ReentrantLock lock = new ReentrantLock();
+    private static final ReentrantLock lock = new ReentrantLock();
 
     /**
      * 关联业务层
      */
-    private QQRegisterService qqRegisterService = new QQRegisterServiceImpl();
+    private final QQRegisterService qqRegisterService = new QQRegisterServiceImpl();
 
     /**
      * 私有化构造, 作为一个单例
@@ -72,8 +72,7 @@ public class QQRegisterController extends QQController {
 
         QQ qq = new QQ(nickname, password, photo, gender, birthday, country, province, city, email, nation, '1',
                 register, 1, "");
-        String number = qqRegisterService.registerQQ(qq);
-        return number;
+        return qqRegisterService.registerQQ(qq);
     }
 
 }

@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * 子弹类,初始化子弹的基本属性
@@ -41,7 +42,7 @@ public class Bullet {
     public void draw(Graphics g) {
         try {
             // 初始化子弹的图片缓冲区
-            bullet = ImageIO.read(new File("static/Fishing/images/buttle01.png"));
+            bullet = ImageIO.read(Objects.requireNonNull(Bullet.class.getResourceAsStream("/static/Fishing/images/buttle01.png")));
             g.drawImage(bullet, bulletx, bullety, null);// 画子弹
         } catch (IOException e) {
             e.printStackTrace();

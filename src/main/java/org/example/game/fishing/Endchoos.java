@@ -49,14 +49,12 @@ public class Endchoos extends CenterJframe {
                 try {
                     // 将分数记录到文件中
                     BufferedOutputStream bos = new BufferedOutputStream(
-                            new FileOutputStream(new File("static/Fishing/Ranking.txt"), true));
+                            new FileOutputStream("/static/Fishing/Ranking.txt", true));
                     bos.write(Helper.mf.coinNum.getText().getBytes());
                     bos.write("\r\n".getBytes());// 换行
                     bos.close();
-                } catch (FileNotFoundException e1) {
-                    e1.printStackTrace();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
                 }
                 Helper.score = 100;// 游戏结束后,设置初试分数
                 Helper.mf.coinNum.setText(Helper.score + "");// 游戏结束后设置分数为初始值

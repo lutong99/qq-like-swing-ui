@@ -12,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * 用来选择游戏界面.
@@ -77,7 +78,8 @@ public class QQGameSelectorFrame extends CenterFrame {
 
     static {
         try {
-            backgroundImage = ImageIO.read(new File("static/GameSelectorImages/BackGround.jpg"));
+            backgroundImage = ImageIO.read(Objects.requireNonNull(QQGameSelectorFrame.class.getResourceAsStream(
+                    "/static/GameSelectorImages/BackGround.jpg")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,18 +105,21 @@ public class QQGameSelectorFrame extends CenterFrame {
         titleJLabel.setBounds(150, 25, 200, 30);
         selectorPanel.add(titleJLabel);
 
-        closeJLabel = new JLabel(new ImageIcon("static/GameSelectorImages/Close.jpg"));
+        closeJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQGameSelectorFrame.class.getResource("/static" +
+                "/GameSelectorImages/Close.jpg"))));
         closeJLabel.setBounds(178, 174, 71, 72);
         closeJLabel.addMouseListener(mouseClick);
         closeJLabel.setCursor(cursor);
         selectorPanel.add(closeJLabel);
 
-        moveBoxJLabel = new JLabel(new ImageIcon("static/GameSelectorImages/MoveBox.jpg"));
+        moveBoxJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQGameSelectorFrame.class.getResource(
+                "/static/GameSelectorImages/MoveBox.jpg"))));
         moveBoxJLabel.setBounds(100, 100, 100, 58);
         moveBoxJLabel.addMouseListener(mouseClick);
         selectorPanel.add(moveBoxJLabel);
 
-        fishingJLabel = new JLabel(new ImageIcon("static/GameSelectorImages/Fish.jpg"));
+        fishingJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQGameSelectorFrame.class.getResource(
+                "/static/GameSelectorImages/Fish.jpg"))));
         fishingJLabel.setBounds(250, 100, 100, 58);
         fishingJLabel.addMouseListener(mouseClick);
         selectorPanel.add(fishingJLabel);
@@ -175,7 +180,8 @@ public class QQGameSelectorFrame extends CenterFrame {
         @Override
         public void mouseEntered(MouseEvent e) {
             if (e.getSource() == closeJLabel) {
-                closeJLabel.setIcon(new ImageIcon("static/GameSelectorImages/CloseRed.jpg"));
+                closeJLabel.setIcon(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                        "/GameSelectorImages/CloseRed.jpg"))));
             } else if (e.getSource() == moveBoxJLabel) {
 
             } else if (e.getSource() == fishingJLabel) {
@@ -186,7 +192,8 @@ public class QQGameSelectorFrame extends CenterFrame {
         @Override
         public void mouseExited(MouseEvent e) {
             if (e.getSource() == closeJLabel) {
-                closeJLabel.setIcon(new ImageIcon("static/GameSelectorImages/Close.jpg"));
+                closeJLabel.setIcon(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                        "/GameSelectorImages/Close.jpg"))));
             } else if (e.getSource() == moveBoxJLabel) {
 
             } else if (e.getSource() == fishingJLabel) {

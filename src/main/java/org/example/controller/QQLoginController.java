@@ -61,9 +61,11 @@ public class QQLoginController extends QQController {
     public QQ loginCheck(String qqNumber, String qqPassword) {
         QQ qq = new QQ(qqNumber, qqPassword);
 
-        QQ qqservice = qqLoginService.loginCheck(qq);
+        QQ loginedQQ = qqLoginService.loginCheck(qq);
 
-        return qqservice;
+        System.out.println("loginedQQ = " + loginedQQ);
+
+        return loginedQQ;
 
     }
 

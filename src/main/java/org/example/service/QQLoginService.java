@@ -15,6 +15,6 @@ public interface QQLoginService extends QQService {
      * @param qq 传入的只有账号密码的qq
      * @return 返回登陆的qq的所有的属性
      */
-    public abstract QQ loginCheck(QQ qq);
+     QQ loginCheck(QQ qq);
 
 }

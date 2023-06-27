@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -45,6 +46,99 @@ public class MyFishing extends CenterJframe {
         this.addpan();// 加入基本组件
         this.coinNumLis();// 大炮射击事件
         this.addCannonLis();// 大炮移动事件
+    }
+
+    /**
+     * 在pan中加入基本组件并将pan加入this
+     */
+    void addpan() {
+        pan.setSize(1280, 720);
+        pan.setLayout(null);
+        pan.setFocusable(true);
+        this.add(pan);
+        try {
+            this.setIconImage(ImageIO.read(Objects.requireNonNull(MyFishing.class.getResourceAsStream("/static/Fishing" +
+                    "/章鱼.png"))));// 设置图标
+            /**
+             * 初始化图片缓冲区
+             */
+            cannon = ImageIO.read(Objects.requireNonNull(MyFishing.class.getResourceAsStream("/static" +
+                    "/Fishing/pao.png")));
+            coin = ImageIO.read(Objects.requireNonNull(MyFishing.class.getResourceAsStream("/static/Fishing/金币.png")));
+            background = ImageIO.read(Objects.requireNonNull(MyFishing.class.getResourceAsStream("/static" +
+                    "/Fishing/bg.jpg")));
+            timeimage = ImageIO.read(Objects.requireNonNull(MyFishing.class.getResourceAsStream("/static" +
+                    "/Fishing/时间.png")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        /*
+         * 设置金币JLabel和事件JLabel的位置,字体格式.字体颜色,并放入pan中
+         */
+        coinNum.setBounds(1150, 0, 200, 50);
+        coinNum.setFont(new Font("Showcard Gothic", Font.BOLD, 30));
+        coinNum.setForeground(new Color(0XFFD700));
+        time.setBounds(70, 0, 100, 50);
+        time.setFont(new Font("Showcard Gothic", Font.BOLD, 30));
+        time.setForeground(new Color(0X40E0D0));
+        pan.add(coinNum);
+        pan.add(time);
+    }
+
+    /**
+     * 大炮移动事件 按下左键大炮向左移动,按下右键,大炮向右移动
+     */
+    void addCannonLis() {
+        pan.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();// 获取按下的按键
+                if (keyCode == KeyEvent.VK_LEFT) {
+                    cannonX -= 20;
+                    if (cannonX <= 0) {
+                        cannonX = 0;
+                    }
+                }
+                if (keyCode == KeyEvent.VK_RIGHT) {
+                    cannonX += 20;
+                    if (cannonX >= 1180) {
+                        cannonX = 1180;
+                    }
+                }
+                pan.repaint();// pan重绘
+            }
+        });
+    }
+
+    /**
+     * 发射子弹事件,按下空格,发射一颗子弹
+     */
+    void coinNumLis() {
+        pan.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_SPACE) {
+                    // 按下空格,将file()方法初始化的bullet对象放入bullets集合中
+                    bullets.add(file());
+                    Helper.score -= 10;// 分数-10
+                    coinNum.setText(Helper.score + "");// 设置分数到游戏界面
+                    if (Helper.score < 0) {// 若分数<0 isover = true
+                        Helper.isover = true;
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 初始化bullet
+     *
+     * @return Bullet对象
+     */
+    Bullet file() {
+        bullet = new Bullet(cannonX + 35, cannonY);
+        return bullet;
     }
 
     /**
@@ -155,96 +249,7 @@ public class MyFishing extends CenterJframe {
                 g.drawImage(tempfish.fishimage, tempfish.fishx, tempfish.fishy, null);
             }
             pan.repaint();// 鱼和子弹的重绘s
-//			
+//
         }
-    }
-
-    /**
-     * 在pan中加入基本组件并将pan加入this
-     */
-    void addpan() {
-        pan.setSize(1280, 720);
-        pan.setLayout(null);
-        pan.setFocusable(true);
-        this.add(pan);
-        try {
-            this.setIconImage(ImageIO.read(new File("static/Fishing/章鱼.png")));// 设置图标
-            /**
-             * 初始化图片缓冲区
-             */
-            cannon = ImageIO.read(new File("static/Fishing/pao.png"));
-            coin = ImageIO.read(new File("static/Fishing/金币.png"));
-            background = ImageIO.read(new File("static/Fishing/bg.jpg"));
-            timeimage = ImageIO.read(new File("static/Fishing/时间.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        /*
-         * 设置金币JLabel和事件JLabel的位置,字体格式.字体颜色,并放入pan中
-         */
-        coinNum.setBounds(1150, 0, 200, 50);
-        coinNum.setFont(new Font("Showcard Gothic", Font.BOLD, 30));
-        coinNum.setForeground(new Color(0XFFD700));
-        time.setBounds(70, 0, 100, 50);
-        time.setFont(new Font("Showcard Gothic", Font.BOLD, 30));
-        time.setForeground(new Color(0X40E0D0));
-        pan.add(coinNum);
-        pan.add(time);
-    }
-
-    /**
-     * 大炮移动事件 按下左键大炮向左移动,按下右键,大炮向右移动
-     */
-    void addCannonLis() {
-        pan.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                int keyCode = e.getKeyCode();// 获取按下的按键
-                if (keyCode == KeyEvent.VK_LEFT) {
-                    cannonX -= 20;
-                    if (cannonX <= 0) {
-                        cannonX = 0;
-                    }
-                }
-                if (keyCode == KeyEvent.VK_RIGHT) {
-                    cannonX += 20;
-                    if (cannonX >= 1180) {
-                        cannonX = 1180;
-                    }
-                }
-                pan.repaint();// pan重绘
-            }
-        });
-    }
-
-    /**
-     * 发射子弹事件,按下空格,发射一颗子弹
-     */
-    void coinNumLis() {
-        pan.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                int keyCode = e.getKeyCode();
-                if (keyCode == KeyEvent.VK_SPACE) {
-                    // 按下空格,将file()方法初始化的bullet对象放入bullets集合中
-                    bullets.add(file());
-                    Helper.score -= 10;// 分数-10
-                    coinNum.setText(Helper.score + "");// 设置分数到游戏界面
-                    if (Helper.score < 0) {// 若分数<0 isover = true
-                        Helper.isover = true;
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * 初始化bullet
-     *
-     * @return Bullet对象
-     */
-    Bullet file() {
-        bullet = new Bullet(cannonX + 35, cannonY);
-        return bullet;
     }
 }

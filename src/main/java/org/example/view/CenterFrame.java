@@ -61,8 +61,6 @@ public abstract class CenterFrame extends JFrame {
     /**
      * 初始化窗口, 我们已经写完了, 在这里主要调用的是另一个
      *
-     * @param title
-     * @param imagePath
      * @see {@link CenterFrame#init(String, String, int, int)}
      */
     public void init(String title, String imagePath) {

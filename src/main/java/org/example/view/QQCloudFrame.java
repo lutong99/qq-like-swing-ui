@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Objects;
 import java.util.Vector;
 
 /**
@@ -25,141 +26,132 @@ import java.util.Vector;
 public class QQCloudFrame extends CenterFrame {
 
     /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * QQ微云的面板, 所有组件的容器
-     */
-    private QQCloundPanel qqCloudPanel;
-
-    /**
-     * 绑定的QQ用户
-     */
-    private QQ loginQQ;
-
-    /**
-     * 头的图片,
-     */
-    private static BufferedImage titleImage;
-    /**
      * 微云页面的固定宽度
      */
     public static final int CLOUD_WIDTH = 800;
-
     /**
      * 微云页面的固定高度
      */
     public static final int CLOUD_HEIGHT = 600;
-
     /**
-     * 关闭的标签
+     *
      */
-    private JLabel closeJLabel;
-
+    private static final long serialVersionUID = 1L;
     /**
-     * 最小化标签
+     * 头的图片,
      */
-    private JLabel minimizeJLabel;
-
-    /**
-     * 鼠标的所有点击事件
-     */
-    private MouseListener mouseClick = new MouseClick();
-
-    /**
-     * 头像的图
-     */
-    private JLabel profileJLabel;
-
-    /**
-     * 昵称标签
-     */
-    private JLabel nicknameJLabel;
-
-    /**
-     * 手型的鼠标
-     */
-    private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
-
-    /**
-     * 上传文件的标签
-     */
-    private JLabel upLoadJLabel;
-
-    /**
-     * 上部分的panel, 主要放置一些, 头像昵称, 上传等等
-     */
-    private JPanel upSectorJPanel;
-
-    /**
-     * 下面部分的panel 容器
-     */
-    private JPanel downSectorJPanel;
-
-    /**
-     * 文件表格, 所有上传的文件都在这里显示
-     */
-    private JTable filesJTable;
-
-    /**
-     * 文件的Vector, 主要放在表格中
-     */
-    private Vector<Vector<String>> filesVector = new Vector<>();
-
-    /**
-     * 文件表格的列名
-     */
-    private Vector<String> filesTileVector = new Vector<>();
-
-    /**
-     * JTable的容器
-     */
-    private JScrollPane filesJScrollPane;
-
-    /**
-     * 构造代码块, 设置我们的表格的列名
-     */ {
-        filesTileVector.add("文件名");
-        filesTileVector.add("上传日期");
-        filesTileVector.add("大小");
-    }
-
-    /**
-     * 我的资源 显示的标签
-     */
-    private JLabel myResourcesJLabel;
-
-    /**
-     * 属性标签
-     */
-    private JLabel propertiesJLabel;
-
-    /**
-     * 下载标签
-     */
-    private JLabel downloadJLabel;
-
-    /**
-     * 字体, 主要用来作为我们的表头的字体
-     */
-    private Font font = new Font("楷体", Font.BOLD, 24);
-
-    /**
-     * 删除的标签
-     */
-    private JLabel deleteJLabel;
+    private static BufferedImage titleImage;
 
     /**
      * 加载我们的微云的头
      */
     static {
         try {
-            titleImage = ImageIO.read(new File("static/CloudImages/qqCloudTitle.png"));
+            titleImage = ImageIO.read(Objects.requireNonNull(QQCloudFrame.class.getResourceAsStream("/static/CloudImages/qqCloudTitle.png")));
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 绑定的QQ用户
+     */
+    private final QQ loginQQ;
+    /**
+     * 鼠标的所有点击事件
+     */
+    private final MouseListener mouseClick = new MouseClick();
+    /**
+     * 手型的鼠标
+     */
+    private final Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
+    /**
+     * 文件表格的列名
+     */
+    private final Vector<String> filesTileVector = new Vector<>();
+    /**
+     * 字体, 主要用来作为我们的表头的字体
+     */
+    private final Font font = new Font("楷体", Font.BOLD, 24);
+    /**
+     * 是否可以拖拽
+     */
+    protected boolean isDragged;
+    /**
+     * QQ微云的面板, 所有组件的容器
+     */
+    private QQCloundPanel qqCloudPanel;
+    /**
+     * 关闭的标签
+     */
+    private JLabel closeJLabel;
+    /**
+     * 最小化标签
+     */
+    private JLabel minimizeJLabel;
+    /**
+     * 头像的图
+     */
+    private JLabel profileJLabel;
+    /**
+     * 昵称标签
+     */
+    private JLabel nicknameJLabel;
+    /**
+     * 上传文件的标签
+     */
+    private JLabel upLoadJLabel;
+    /**
+     * 上部分的panel, 主要放置一些, 头像昵称, 上传等等
+     */
+    private JPanel upSectorJPanel;
+    /**
+     * 下面部分的panel 容器
+     */
+    private JPanel downSectorJPanel;
+    /**
+     * 文件表格, 所有上传的文件都在这里显示
+     */
+    private JTable filesJTable;
+    /**
+     * 文件的Vector, 主要放在表格中
+     */
+    private Vector<Vector<String>> filesVector = new Vector<>();
+    /**
+     * JTable的容器
+     */
+    private JScrollPane filesJScrollPane;
+    /**
+     * 我的资源 显示的标签
+     */
+    private JLabel myResourcesJLabel;
+    /**
+     * 属性标签
+     */
+    private JLabel propertiesJLabel;
+    /**
+     * 下载标签
+     */
+    private JLabel downloadJLabel;
+    /**
+     * 删除的标签
+     */
+    private JLabel deleteJLabel;
+    /**
+     * 临时变量
+     */
+    private Point tempPoint = null;
+    /**
+     * 位置
+     */
+    private Point location = null;
+
+    /*
+      构造代码块, 设置我们的表格的列名
+     */ {
+        filesTileVector.add("文件名");
+        filesTileVector.add("上传日期");
+        filesTileVector.add("大小");
     }
 
     /**
@@ -170,7 +162,7 @@ public class QQCloudFrame extends CenterFrame {
     public QQCloudFrame(QQ loginQQ) {
         this.loginQQ = loginQQ;
         init(null, null, CLOUD_WIDTH, CLOUD_HEIGHT);
-        this.setIconImage(new ImageIcon("static/CloudImages/cloud.png").getImage());
+        this.setIconImage(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static/CloudImages/cloud.png"))).getImage());
     }
 
     @Override
@@ -207,7 +199,7 @@ public class QQCloudFrame extends CenterFrame {
         upSectorJPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
         profileJLabel = new JLabel(new ImageIcon(loginQQ.getPhoto()));
         upSectorJPanel.add(profileJLabel);
-//		
+//
 
         // 昵称的标签的操作
         nicknameJLabel = new JLabel(loginQQ.getNickname());
@@ -215,7 +207,8 @@ public class QQCloudFrame extends CenterFrame {
         upSectorJPanel.add(nicknameJLabel);
 
         // 上传标签的操作
-        upLoadJLabel = new JLabel(new ImageIcon("static/CloudImages/upload.png"));
+        upLoadJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                "/CloudImages/upload.png"))));
         upSectorJPanel.add(upLoadJLabel);
         upLoadJLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));// 手型
         upLoadJLabel.addMouseListener(mouseClick);
@@ -225,14 +218,14 @@ public class QQCloudFrame extends CenterFrame {
         qqCloudPanel.add(upSectorJPanel);
 
         // 我的资源的标签
-        myResourcesJLabel = new JLabel(new ImageIcon("static/CloudImages/myResources.png"));
+        myResourcesJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                "/CloudImages/myResources.png"))));
         myResourcesJLabel.setBounds(10, 100, 164, 57);
         qqCloudPanel.add(myResourcesJLabel);
 
         // 文件表格的操作
         filesJTable = new JTable(filesVector, filesTileVector);
-        filesJScrollPane = new JScrollPane(filesJTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        filesJScrollPane = new JScrollPane(filesJTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         filesJTable.setFont(new Font("宋体", Font.PLAIN, 20));
         filesJScrollPane.setBounds(10, 170, 780, 380);
         qqCloudPanel.add(filesJScrollPane);
@@ -240,7 +233,8 @@ public class QQCloudFrame extends CenterFrame {
 
         // 下面的panel容器的内容操作
         downSectorJPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 15));
-        propertiesJLabel = new JLabel(new ImageIcon("static/CloudImages/properties.png"));
+        propertiesJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                "/CloudImages/properties.png"))));
 //		propertiesJLabel.setFont(new Font("宋体",Font.PLAIN,23));
         propertiesJLabel.addMouseListener(mouseClick);
 
@@ -248,13 +242,15 @@ public class QQCloudFrame extends CenterFrame {
         downSectorJPanel.add(propertiesJLabel);
 
         // 下载的操作
-        downloadJLabel = new JLabel(new ImageIcon("static/CloudImages/download.png"));
+        downloadJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                "/CloudImages/download.png"))));
         downloadJLabel.setCursor(cursor);// 手型
         downSectorJPanel.add(downloadJLabel);
         downloadJLabel.addMouseListener(mouseClick);
 
         // 删除的操作
-        deleteJLabel = new JLabel(new ImageIcon("static/CloudImages/delete.png"));
+        deleteJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                "/CloudImages/delete.png"))));
         deleteJLabel.addMouseListener(mouseClick);
         deleteJLabel.setCursor(cursor);
         downSectorJPanel.add(deleteJLabel);
@@ -289,6 +285,34 @@ public class QQCloudFrame extends CenterFrame {
             filesVector = datas;
         } else {
         }
+    }
+
+    /**
+     * 设置我们的面板可以移动,
+     */
+    private void setDragable() {
+        this.addMouseListener(new java.awt.event.MouseAdapter() {
+
+            public void mouseReleased(java.awt.event.MouseEvent e) {
+                isDragged = false;
+                QQCloudFrame.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); // 默认鼠标的箭头
+            }
+
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                tempPoint = new Point(e.getX(), e.getY());
+
+                isDragged = true;
+                QQCloudFrame.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+        this.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent e) {
+                if (isDragged) {
+                    location = new Point(QQCloudFrame.this.getLocation().x + e.getX() - tempPoint.x, QQCloudFrame.this.getLocation().y + e.getY() - tempPoint.y);
+                    QQCloudFrame.this.setLocation(location);
+                }
+            }
+        });
     }
 
     /**
@@ -391,8 +415,7 @@ public class QQCloudFrame extends CenterFrame {
 //							saveChooser.setSelectedFile(new File(name));
                                 if (saveOption == JFileChooser.APPROVE_OPTION) {
 //								saveChooser.setSelectedFile(new File(name));
-                                    FileOutputStream fileOutputStream = new FileOutputStream(
-                                            saveChooser.getSelectedFile());
+                                    FileOutputStream fileOutputStream = new FileOutputStream(saveChooser.getSelectedFile());
                                     byte[] bytes = new byte[1024];
                                     int len = 0;
                                     while ((len = fileInputStream.read(bytes)) != -1) {
@@ -422,8 +445,7 @@ public class QQCloudFrame extends CenterFrame {
                     Vector<String> deleteVector = filesVector.get(row);
                     if (row > -1) {
 
-                        int showConfirmDialog = JOptionPane.showConfirmDialog(qqCloudPanel,
-                                "确定要删除文件" + deleteVector.get(0) + "吗? ", "确认删除吗", JOptionPane.OK_CANCEL_OPTION);
+                        int showConfirmDialog = JOptionPane.showConfirmDialog(qqCloudPanel, "确定要删除文件" + deleteVector.get(0) + "吗? ", "确认删除吗", JOptionPane.OK_CANCEL_OPTION);
 
                         if (showConfirmDialog == 0) {
                             boolean deleteFiles = QQCloudController.getInstance().deleteFiles(deleteVector, loginQQ);
@@ -450,11 +472,9 @@ public class QQCloudFrame extends CenterFrame {
         @Override
         public void mouseEntered(MouseEvent e) {
             if (e.getSource() == closeJLabel) {
-                closeJLabel.setIcon(new ImageIcon("static/CloudImages/loginclose.png"));
+                closeJLabel.setIcon(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static/CloudImages/loginclose.png"))));
             } else if (e.getSource() == minimizeJLabel) {
-                minimizeJLabel.setIcon(new ImageIcon("static/CloudImages/loginMin.png"));
-            } else {
-
+                minimizeJLabel.setIcon(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static/CloudImages/loginMin.png"))));
             }
         }
 
@@ -464,8 +484,6 @@ public class QQCloudFrame extends CenterFrame {
                 closeJLabel.setIcon(new ImageIcon(""));
             } else if (e.getSource() == minimizeJLabel) {
                 minimizeJLabel.setIcon(new ImageIcon(""));
-            } else {
-
             }
         }
 
@@ -491,48 +509,6 @@ public class QQCloudFrame extends CenterFrame {
             }
             return textField;
         }
-    }
-
-    /**
-     * 是否可以拖拽
-     */
-    protected boolean isDragged;
-    /**
-     * 临时变量
-     */
-    private Point tempPoint = null;
-    /**
-     * 位置
-     */
-    private Point location = null;
-
-    /**
-     * 设置我们的面板可以移动,
-     */
-    private void setDragable() {
-        this.addMouseListener(new java.awt.event.MouseAdapter() {
-
-            public void mouseReleased(java.awt.event.MouseEvent e) {
-                isDragged = false;
-                QQCloudFrame.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); // 默认鼠标的箭头
-            }
-
-            public void mousePressed(java.awt.event.MouseEvent e) {
-                tempPoint = new Point(e.getX(), e.getY());
-
-                isDragged = true;
-                QQCloudFrame.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            }
-        });
-        this.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent e) {
-                if (isDragged) {
-                    location = new Point(QQCloudFrame.this.getLocation().x + e.getX() - tempPoint.x,
-                            QQCloudFrame.this.getLocation().y + e.getY() - tempPoint.y);
-                    QQCloudFrame.this.setLocation(location);
-                }
-            }
-        });
     }
 
 }

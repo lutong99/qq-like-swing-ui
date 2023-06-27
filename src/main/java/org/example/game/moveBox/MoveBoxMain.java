@@ -3,11 +3,11 @@ package org.example.game.moveBox;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Objects;
 
 /**
  * 推箱子的主界面
- *
- * @author Lutong99
+ * @author 来源自网络
  */
 public class MoveBoxMain extends JFrame {
     /**
@@ -30,7 +30,7 @@ public class MoveBoxMain extends JFrame {
         centerPanel = new MoveBoxCenterPanel();
 
         // 窗口图片
-        setIconImage(new ImageIcon("static/GameImages/9.GIF").getImage());
+        setIconImage(new ImageIcon(Objects.requireNonNull(MoveBoxMain.class.getResource("/static/GameImages/9.GIF"))).getImage());
 
         // 音乐文件
         sound = new MoveBoxSound();
@@ -92,12 +92,14 @@ public class MoveBoxMain extends JFrame {
         cmmusic.setBounds(10, 520, 80, 20);
         dong.add(cmmusic);
 
-        ImageIcon z = new ImageIcon("static/GameImages/aaaa1.jpg");
+        ImageIcon z = new ImageIcon(Objects.requireNonNull(MoveBoxMain.class.getResource("/static/GameImages/aaaa1" +
+                ".jpg")));
         JLabel jl = new JLabel(z);
         jl.setBounds(0, 0, 100, 600);// 添加背景图片
         dong.add(jl);
 
-        ImageIcon x = new ImageIcon("static/GameImages/aaaa.jpg");
+        ImageIcon x =
+                new ImageIcon(Objects.requireNonNull(MoveBoxMain.class.getResource("/static/GameImages/aaaa.jpg")));
         JLabel j2 = new JLabel(x);
         j2.setBounds(0, 0, 600, 600);// 添加背景图片
         centerPanel.add(j2);

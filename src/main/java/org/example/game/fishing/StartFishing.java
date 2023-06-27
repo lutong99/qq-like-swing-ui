@@ -6,8 +6,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * 开始游戏
@@ -40,19 +40,6 @@ public class StartFishing extends CenterJframe {
 //		StartFishing s = new StartFishing(1200, 628, "捕鱼奇兵");
 //	}
 
-    class MyJPanel extends JPanel {
-        /**
-         *
-         */
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            g.drawImage(StartpanImage, 0, 0, this);// 设置开始界面背景
-        }
-    }
-
     void addStartpan() {
         Startpan.setPreferredSize(new Dimension(width, height));
         Startpan.setLayout(null);
@@ -60,10 +47,14 @@ public class StartFishing extends CenterJframe {
             /*
              * 将图片加入图片缓冲区
              */
-            StartpanImage = ImageIO.read(new File("static/Fishing/Start.jpg"));// 背景图片
-            StartbtnImage = ImageIO.read(new File("static/Fishing/Start.png"));// 开始游戏按钮图片
-            rangkingimage = ImageIO.read(new File("static/Fishing/排行.png"));
-            this.setIconImage(ImageIO.read(new File("static/Fishing/章鱼.png")));// 设置图标
+            StartpanImage = ImageIO.read(Objects.requireNonNull(StartFishing.class.getResourceAsStream("/static" +
+                    "/Fishing/Start.jpg")));// 背景图片
+            StartbtnImage = ImageIO.read(Objects.requireNonNull(StartFishing.class.getResourceAsStream("/static" +
+                    "/Fishing/Start.png")));// 开始游戏按钮图片
+            rangkingimage = ImageIO.read(Objects.requireNonNull(StartFishing.class.getResourceAsStream("/static" +
+                    "/Fishing/排行.png")));
+            this.setIconImage(ImageIO.read(Objects.requireNonNull(StartFishing.class.getResourceAsStream("/static" +
+                    "/Fishing/章鱼.png"))));// 设置图标
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -102,6 +93,19 @@ public class StartFishing extends CenterJframe {
                 Helper.rk.setVisible(true);
             }
         });
+    }
+
+    class MyJPanel extends JPanel {
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.drawImage(StartpanImage, 0, 0, this);// 设置开始界面背景
+        }
     }
 
 }

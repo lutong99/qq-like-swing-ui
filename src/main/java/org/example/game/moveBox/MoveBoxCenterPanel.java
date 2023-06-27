@@ -6,25 +6,27 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 import java.util.Stack;
 
 /**
  * 推箱子的剧中窗口
  *
- * @author Lutong99
+ * @author 来源自网络
  */
 public class MoveBoxCenterPanel extends JPanel {
     /**
      * 仅仅为了不让显示警告
      */
     private static final long serialVersionUID = 1L;
+    int level;
+    JLabel levelJLabel;
     private int hua = 1;
     private int up = 1;
     private int down = 2;
     private int left = 3;
     private int right = 4;
     private int direction = down;// 默认向下
-
     private int hero = 5;// 定位人的位置
     private int heroX;
     private int heroY;// 人当前位置
@@ -32,34 +34,32 @@ public class MoveBoxCenterPanel extends JPanel {
     private int preOneY;
     private int preTwoX;
     private int preTwoY;// 人前一格前两格位置
-
     // 草地 箱子代表的值
     private int grass = 2;
     private int box = 3;
     private int destination = 4;
     private int hong = 9;
     private int previousMap[][];
-    int level;
     private int map[][];// 获取地图大小
     // 步骤
-    private Stack<step> steps = new Stack<step>();
-
-    JLabel levelJLabel;
+    private Stack<step> steps = new Stack<>();
     // 引入图片
-    private Image imgs[] = {new ImageIcon("static/GameImages/.gif").getImage(), // 0
-            new ImageIcon("static/GameImages/1.gif").getImage(), // 1
-            new ImageIcon("static/GameImages/2.jpg").getImage(), // 2
-            new ImageIcon("static/GameImages/9.jpg").getImage(), // 3
-            new ImageIcon("static/GameImages/4a.GIF").getImage(), // 4
-            new ImageIcon("static/GameImages/5.gif").getImage(), // 5
-            new ImageIcon("static/GameImages/6.gif").getImage(), // 6
-            new ImageIcon("static/GameImages/7.gif").getImage(), // 7
-            new ImageIcon("static/GameImages/8.gif").getImage(), // 8
-            new ImageIcon("static/GameImages/9a.GIF").getImage(), // 9
-            new ImageIcon("static/GameImages/aaaa.jpg").getImage()};// 10
+    private Image imgs[] = {new ImageIcon(Objects.requireNonNull(MoveBoxCenterPanel.class.getResource("/static" +
+            "/GameImages/0.gif"))).getImage(), // 0
+            new ImageIcon(Objects.requireNonNull(MoveBoxCenterPanel.class.getResource("/static/GameImages/1.gif"))).getImage(), // 1
+            new ImageIcon(Objects.requireNonNull(MoveBoxCenterPanel.class.getResource("/static/GameImages/2.jpg"))).getImage(), // 2
+            new ImageIcon(Objects.requireNonNull(MoveBoxCenterPanel.class.getResource("/static/GameImages/9.jpg"))).getImage(), // 3
+            new ImageIcon(Objects.requireNonNull(MoveBoxCenterPanel.class.getResource("/static/GameImages/4a.GIF"))).getImage(), // 4
+            new ImageIcon(Objects.requireNonNull(MoveBoxCenterPanel.class.getResource("/static/GameImages/5.gif"))).getImage(), // 5
+            new ImageIcon(Objects.requireNonNull(MoveBoxCenterPanel.class.getResource("/static/GameImages/6.gif"))).getImage(), // 6
+            new ImageIcon(Objects.requireNonNull(MoveBoxCenterPanel.class.getResource("/static/GameImages/7.gif"))).getImage(), // 7
+            new ImageIcon(Objects.requireNonNull(MoveBoxCenterPanel.class.getResource("/static/GameImages/8.gif"))).getImage(), // 8
+            new ImageIcon(Objects.requireNonNull(MoveBoxCenterPanel.class.getResource("/static/GameImages/9a.GIF"))).getImage(), // 9
+            new ImageIcon(Objects.requireNonNull(MoveBoxCenterPanel.class.getResource("/static/GameImages/aaaa.jpg"))).getImage() // 10
+
+    };
 
     // 构造函数
-
     public MoveBoxCenterPanel() {
         map = MoveBoxMap.getMap(level);
         this.initGame();
@@ -70,92 +70,6 @@ public class MoveBoxCenterPanel extends JPanel {
 
     public void setText() {
         levelJLabel.setText("LEVEL:" + level);
-    }
-
-    // 请求焦点继承鼠标事件
-    class C extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            // TODO 自动生成的方法存根
-            MoveBoxCenterPanel.this.requestFocus();
-            hua = 2;
-            MoveBoxCenterPanel.this.repaint();
-        }
-
-    }
-
-    // 继承键值
-    class B extends KeyAdapter {
-        @Override
-        public void keyPressed(KeyEvent e) {
-            // TODO 自动生成的方法存根
-            if (e.getKeyCode() == KeyEvent.VK_UP) {
-                direction = up;
-            }
-            if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                direction = down;
-            }
-            if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                direction = left;
-            }
-            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                direction = right;
-            }
-
-            gethanglie();// 获取行列
-            move();
-            MoveBoxCenterPanel.this.repaint();// 重新绘画
-            // 过关
-            boolean bin = iswin();
-            if (bin) {
-                JOptionPane.showMessageDialog(null, "恭喜过关！");
-                if (level <= 11) {
-                    steps.clear();// 清空步骤 防止悔一步返回
-                    level += 1;// 加一
-                    setText();// 过关等级加
-                    initGame();// 游戏初始化
-                    MoveBoxCenterPanel.this.repaint();
-                } else {
-                    JOptionPane.showMessageDialog(null, "恭喜通关！");
-                    return;
-                }
-            }
-        }
-
-    }
-
-    // 定义步骤
-    class step {
-        /**
-         * @return the mapData
-         */
-        public int[][] getMapData() {
-            return mapData;
-        }
-
-        /**
-         * @param mapData the mapData to set
-         */
-        public void setMapData(int[][] mapData) {
-            this.mapData = mapData;
-        }
-
-        /**
-         * @return the direc
-         */
-        public int getDirec() {
-            return direc;
-        }
-
-        /**
-         * @param direc the direc to set
-         */
-        public void setDirec(int direc) {
-            this.direc = direc;
-        }
-
-        private int mapData[][] = new int[20][20];
-        private int direc;
     }
 
     // 主要调用方法
@@ -319,6 +233,92 @@ public class MoveBoxCenterPanel extends JPanel {
             }
             // 让面板获取焦点
             // 中心面板.this.requestFocus();//让绘制玩图就获取焦点
+        }
+    }
+
+    // 请求焦点继承鼠标事件
+    class C extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            // TODO 自动生成的方法存根
+            MoveBoxCenterPanel.this.requestFocus();
+            hua = 2;
+            MoveBoxCenterPanel.this.repaint();
+        }
+
+    }
+
+    // 继承键值
+    class B extends KeyAdapter {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            // TODO 自动生成的方法存根
+            if (e.getKeyCode() == KeyEvent.VK_UP) {
+                direction = up;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                direction = down;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                direction = left;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                direction = right;
+            }
+
+            gethanglie();// 获取行列
+            move();
+            MoveBoxCenterPanel.this.repaint();// 重新绘画
+            // 过关
+            boolean bin = iswin();
+            if (bin) {
+                JOptionPane.showMessageDialog(null, "恭喜过关！");
+                if (level <= 11) {
+                    steps.clear();// 清空步骤 防止悔一步返回
+                    level += 1;// 加一
+                    setText();// 过关等级加
+                    initGame();// 游戏初始化
+                    MoveBoxCenterPanel.this.repaint();
+                } else {
+                    JOptionPane.showMessageDialog(null, "恭喜通关！");
+                    return;
+                }
+            }
+        }
+
+    }
+
+    // 定义步骤
+    class step {
+        private int mapData[][] = new int[20][20];
+        private int direc;
+
+        /**
+         * @return the mapData
+         */
+        public int[][] getMapData() {
+            return mapData;
+        }
+
+        /**
+         * @param mapData the mapData to set
+         */
+        public void setMapData(int[][] mapData) {
+            this.mapData = mapData;
+        }
+
+        /**
+         * @return the direc
+         */
+        public int getDirec() {
+            return direc;
+        }
+
+        /**
+         * @param direc the direc to set
+         */
+        public void setDirec(int direc) {
+            this.direc = direc;
         }
     }
 }

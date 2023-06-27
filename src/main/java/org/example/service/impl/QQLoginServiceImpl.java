@@ -14,12 +14,11 @@ public class QQLoginServiceImpl implements QQLoginService {
     /**
      * 关联我们的DAO层
      */
-    private QQLoginDAO qqLoginDAO = new QQLoginDAOImpl();
+    private final QQLoginDAO qqLoginDAO = new QQLoginDAOImpl();
 
     @Override
     public QQ loginCheck(QQ qq) {
-        QQ loginCheck = qqLoginDAO.loginCheck(qq);
-        return loginCheck;
+        return qqLoginDAO.loginCheck(qq);
     }
 
 }

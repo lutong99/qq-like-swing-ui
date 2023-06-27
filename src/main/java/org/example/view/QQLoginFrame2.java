@@ -8,8 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Vector;
 
 /**
@@ -22,94 +22,93 @@ import java.util.Vector;
 public class QQLoginFrame2 extends CenterFrame {
 
     /**
-     * 没有什么实际意义, 完全是为了避免警告
-     */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * 登陆板 这个是一个内部类的实例, 因为我们只在这一个类中使用
-     */
-    private LoginPanel loginPanel;
-
-    /**
-     * 关闭, 主要是为了美化界面
-     */
-    private JLabel close;
-
-    /**
-     * 最小化, 也是为了美化界面
-     */
-    private JLabel minimize;
-
-    /**
-     * 弹出的框, 和最小化, 关闭在一起的
-     */
-    private JLabel pop;
-
-    /**
-     * 我们的背景
-     */
-    private static BufferedImage backgroundImage;
-
-    /**
      * 登陆面板的固定宽度
      */
     public static final int LOGIN_WIDTH = 430;
-
     /**
      * 登陆面板的固定高度
      */
     public static final int LOGIN_HEIGHT = 310;
-
     /**
-     * 记住密码
+     * 没有什么实际意义, 完全是为了避免警告
      */
-    private JCheckBox rememberPassword;
-
+    private static final long serialVersionUID = 1L;
     /**
-     * 自动登录
+     * 我们的背景
      */
-    private JCheckBox autoLogin;
-
-    //	private JTextField userName;
-    private JPasswordField passwordField;
-
-    private JComboBox<String> selectQQNumber;
-
-    private JLabel forgetPassword;
-    private JLabel register;
-
-    private JLabel loginProfile;
-
-    private JLabel loginButton;
-
-    private JPopupMenu states;
-
-    private JMenuItem onlineState;
-
-    private JMenuItem hideState;
-
-    private JMenuItem busyState;
-
-    private JMenuItem leaveState;
-
-    private JLabel stateSelect;
-
-    private MouseListener showState = new ShowStates();
-
+    private static BufferedImage backgroundImage;
     private static Vector<String> vlist = new Vector<>();
-
-    {
-        vlist.add("QQ/手机/邮箱");
-    }
 
     static {
         try {
             // 读取我们的背景
-            backgroundImage = ImageIO.read(new File("static/LoginImages/login.png"));
+            backgroundImage = ImageIO.read(Objects.requireNonNull(QQLoginFrame2.class.getResourceAsStream("/static/LoginImages/login.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 是否可以拖拽
+     */
+    protected boolean isDragged;
+    /**
+     * 登陆板 这个是一个内部类的实例, 因为我们只在这一个类中使用
+     */
+    private LoginPanel loginPanel;
+    /**
+     * 关闭, 主要是为了美化界面
+     */
+    private JLabel close;
+    /**
+     * 最小化, 也是为了美化界面
+     */
+    private JLabel minimize;
+    /**
+     * 弹出的框, 和最小化, 关闭在一起的
+     */
+    private JLabel pop;
+    /**
+     * 记住密码
+     */
+    private JCheckBox rememberPassword;
+    /**
+     * 自动登录
+     */
+    private JCheckBox autoLogin;
+    //	private JTextField userName;
+    private JPasswordField passwordField;
+    private JComboBox<String> selectQQNumber;
+    private JLabel forgetPassword;
+    private JLabel register;
+    private JLabel loginProfile;
+    private JLabel loginButton;
+    private JPopupMenu states;
+    private JMenuItem onlineState;
+    private JMenuItem hideState;
+    private JMenuItem busyState;
+    private JMenuItem leaveState;
+    private JLabel stateSelect;
+    private MouseListener showState = new ShowStates();
+    /**
+     * 右上角的三个按钮的鼠标监听器
+     */
+    private RightUp rightUp = new RightUp();
+    private ActionListener setState = new SetState();
+    private FocusListener inputFoucs = new InputFocus();
+    private MouseListener mouseClick = new MouseClick();
+    private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
+    /**
+     * 临时变量
+     */
+    private Point tempPoint = null;
+    /**
+     * 位置
+     */
+    private Point location = null;
+
+    {
+        vlist.add("QQ/手机/邮箱");
     }
 
     /**
@@ -133,19 +132,6 @@ public class QQLoginFrame2 extends CenterFrame {
             }
         });
     }
-
-    /**
-     * 右上角的三个按钮的鼠标监听器
-     */
-    private RightUp rightUp = new RightUp();
-
-    private ActionListener setState = new SetState();
-
-    private FocusListener inputFoucs = new InputFocus();
-
-    private MouseListener mouseClick = new MouseClick();
-
-    private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
 
     @Override
     protected void addComponent() {
@@ -215,7 +201,7 @@ public class QQLoginFrame2 extends CenterFrame {
         forgetPassword.setForeground(mycolor);
         forgetPassword.setCursor(cursor);// 手
 
-        ImageIcon buttomIcon = new ImageIcon("static/LoginImages/loginButton.png");
+        ImageIcon buttomIcon = new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/LoginImages/loginButton.png")));
         loginButton = new JLabel();
         loginButton.setIcon(buttomIcon);
         loginButton.setBounds(130, 270, 232, 40);
@@ -223,23 +209,26 @@ public class QQLoginFrame2 extends CenterFrame {
         loginButton.setCursor(cursor);
         loginButton.addMouseListener(new LoginClick());
 
-        stateSelect = new JLabel(new ImageIcon("static/LoginImages/s_online.png"));
+        stateSelect = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static" +
+                "/LoginImages/s_online.png"))));
         stateSelect.setBounds(97, 235, 15, 15);
         loginPanel.add(stateSelect);
         stateSelect.addMouseListener(showState);
 
-        loginProfile = new JLabel(new ImageIcon("static/LoginImages/loginProfile.png"));
+        loginProfile = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static" +
+                "/LoginImages/loginProfile.png"))));
         loginProfile.setBounds(50, 190, 60, 60);
         loginPanel.add(loginProfile);
 
         states = new JPopupMenu();
-        onlineState = new JMenuItem("我在线上", new ImageIcon("static/LoginImages/s_online.png"));
+        onlineState = new JMenuItem("我在线上", new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource(
+                "/static/LoginImages/s_online.png"))));
         onlineState.addActionListener(setState);
-        leaveState = new JMenuItem("离开", new ImageIcon("static/LoginImages/s_leave.png"));
+        leaveState = new JMenuItem("离开", new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/LoginImages/s_leave.png"))));
         leaveState.addActionListener(setState);
-        busyState = new JMenuItem("忙碌", new ImageIcon("static/LoginImages/s_busy.png"));
+        busyState = new JMenuItem("忙碌", new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/LoginImages/s_busy.png"))));
         busyState.addActionListener(setState);
-        hideState = new JMenuItem("隐身", new ImageIcon("static/LoginImages/s_hide.png"));
+        hideState = new JMenuItem("隐身", new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/LoginImages/s_hide.png"))));
         hideState.addActionListener(setState);
         states.add(onlineState);
         states.addSeparator();
@@ -260,19 +249,6 @@ public class QQLoginFrame2 extends CenterFrame {
         // 设置可以拖拽
         setDragable();
     }
-
-    /**
-     * 是否可以拖拽
-     */
-    protected boolean isDragged;
-    /**
-     * 临时变量
-     */
-    private Point tempPoint = null;
-    /**
-     * 位置
-     */
-    private Point location = null;
 
     /**
      * 设置我们的面板可以移动,
@@ -301,6 +277,28 @@ public class QQLoginFrame2 extends CenterFrame {
                 }
             }
         });
+    }
+
+    private void loginCheck() {
+        if ("".equals(selectQQNumber.getSelectedItem()) || selectQQNumber.getSelectedItem() == null
+                || "QQ/手机/邮箱".equals(selectQQNumber.getSelectedItem())) {
+            JOptionPane.showMessageDialog(loginPanel, "qq号码为空");
+        }
+        if ("".equals(String.valueOf(passwordField.getPassword())) || passwordField.getPassword() == null) {
+            JOptionPane.showMessageDialog(loginPanel, "请输入密码");
+        } else {
+            String qqNumber = String.valueOf(selectQQNumber.getSelectedItem());
+            String qqPassword = String.valueOf(passwordField.getPassword());
+            QQ loginCheck = QQLoginController.getQqLoginController().loginCheck(qqNumber, qqPassword);
+            if (loginCheck == null) {
+                JOptionPane.showMessageDialog(loginPanel, "用户名或密码错误, 请重新输入");
+                passwordField.setText("");
+                selectQQNumber.grabFocus();
+            } else {
+                JOptionPane.showMessageDialog(loginPanel, "登陆成功");
+                vlist.add(String.valueOf(selectQQNumber.getSelectedItem()));
+            }
+        }
     }
 
     /**
@@ -338,11 +336,11 @@ public class QQLoginFrame2 extends CenterFrame {
         @Override
         public void mouseEntered(MouseEvent e) {
             if (e.getSource() == close) {
-                close.setIcon(new ImageIcon("static/LoginImages/loginclose.png"));
+                close.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/LoginImages/loginclose.png"))));
             } else if (e.getSource() == minimize) {
-                minimize.setIcon(new ImageIcon("static/LoginImages/loginMin.png"));
+                minimize.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/LoginImages/loginMin.png"))));
             } else if (e.getSource() == pop) {
-                pop.setIcon(new ImageIcon("static/LoginImages/loginpop.png"));
+                pop.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/LoginImages/loginpop.png"))));
             }
         }
 
@@ -393,15 +391,15 @@ public class QQLoginFrame2 extends CenterFrame {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == onlineState) {
                 // 点击菜单项改变这个用户的状态
-                stateSelect.setIcon(new ImageIcon("static/LoginImages/s_online.png"));
+                stateSelect.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/LoginImages/s_online.png"))));
             } else if (e.getSource() == hideState) {
-                stateSelect.setIcon(new ImageIcon("static/LoginImages/s_hide.png"));
+                stateSelect.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/LoginImages/s_hide.png"))));
 
             } else if (e.getSource() == busyState) {
-                stateSelect.setIcon(new ImageIcon("static/LoginImages/s_busy.png"));
+                stateSelect.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/LoginImages/s_busy.png"))));
 
             } else if (e.getSource() == leaveState) {
-                stateSelect.setIcon(new ImageIcon("static/LoginImages/s_leave.png"));
+                stateSelect.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/LoginImages/s_leave.png"))));
             }
         }
     }
@@ -438,28 +436,6 @@ public class QQLoginFrame2 extends CenterFrame {
                 if ("".equals(selectQQNumber.getSelectedItem())) {
                     selectQQNumber.setSelectedItem("QQ/手机/邮箱");
                 }
-            }
-        }
-    }
-
-    private void loginCheck() {
-        if ("".equals(selectQQNumber.getSelectedItem()) || selectQQNumber.getSelectedItem() == null
-                || "QQ/手机/邮箱".equals(selectQQNumber.getSelectedItem())) {
-            JOptionPane.showMessageDialog(loginPanel, "qq号码为空");
-        }
-        if ("".equals(String.valueOf(passwordField.getPassword())) || passwordField.getPassword() == null) {
-            JOptionPane.showMessageDialog(loginPanel, "请输入密码");
-        } else {
-            String qqNumber = String.valueOf(selectQQNumber.getSelectedItem());
-            String qqPassword = String.valueOf(passwordField.getPassword());
-            QQ loginCheck = QQLoginController.getQqLoginController().loginCheck(qqNumber, qqPassword);
-            if (loginCheck == null) {
-                JOptionPane.showMessageDialog(loginPanel, "用户名或密码错误, 请重新输入");
-                passwordField.setText("");
-                selectQQNumber.grabFocus();
-            } else {
-                JOptionPane.showMessageDialog(loginPanel, "登陆成功");
-                vlist.add(String.valueOf(selectQQNumber.getSelectedItem()));
             }
         }
     }

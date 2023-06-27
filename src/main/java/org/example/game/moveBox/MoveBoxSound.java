@@ -4,15 +4,16 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import java.io.File;
+import java.util.Objects;
 
 /**
  * 推向子的声音面板
  *
- * @author Lutong99
+ * @author 来源自网络
  */
 public class MoveBoxSound {
-    String path = new String("resources\\music\\");// 目录
-    String file = new String("flourish.mid");// 默认的文件名
+    String path = "/static/music/";// 目录
+    String file = "flourish.mid";// 默认的文件名
     boolean sign;// 是否播放音乐的标志
     Sequence seq;// 序列
     Sequencer midi;// 类型变量 流播放器
@@ -24,7 +25,7 @@ public class MoveBoxSound {
 
     void loadSound() {// 播放音乐
         try {
-            seq = MidiSystem.getSequence(new File(path + file));
+            seq = MidiSystem.getSequence(Objects.requireNonNull(MoveBoxSound.class.getResource(path + file)));
             midi = MidiSystem.getSequencer();
             midi.open();
             midi.setSequence(seq);

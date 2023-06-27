@@ -19,7 +19,7 @@ public interface QQCloudService extends QQService {
      * @param qq         微云的qq用户
      * @return 上传的文件对象
      */
-    public abstract FileCustom uploadFiles(FileCustom fileUpload, QQ qq);
+    FileCustom uploadFiles(FileCustom fileUpload, QQ qq);
 
     /**
      * 获取所有的已经上传的数据的服务
@@ -27,7 +27,7 @@ public interface QQCloudService extends QQService {
      * @param qq 微云的qq用户
      * @return 所有的信息的Vector
      */
-    public abstract Vector<Vector<String>> getDatas(QQ qq);
+    Vector<Vector<String>> getDatas(QQ qq);
 
     /**
      * 下载文件的服务
@@ -36,7 +36,7 @@ public interface QQCloudService extends QQService {
      * @param qq            微云的qq用户
      * @return 我们的自定义文件
      */
-    public abstract FileCustom downloadFiles(FileCustom downLoadFiles, QQ qq);
+    FileCustom downloadFiles(FileCustom downLoadFiles, QQ qq);
 
     /**
      * 删除云文件的服务
@@ -45,6 +45,6 @@ public interface QQCloudService extends QQService {
      * @param qq         微云用户
      * @return {@code true} 删除成功, {@code false} 删除失败
      */
-    public abstract boolean deleteFiles(FileCustom deleteFile, QQ qq);
+    boolean deleteFiles(FileCustom deleteFile, QQ qq);
 
 }

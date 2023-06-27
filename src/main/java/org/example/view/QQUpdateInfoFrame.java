@@ -11,6 +11,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,221 +23,224 @@ import java.util.regex.Pattern;
 public class QQUpdateInfoFrame extends CenterFrame {
 
     /**
+     * 固定宽度
+     */
+    public static final int REGISTER_WIDTH = 400;
+    /**
+     * 固定高度
+     */
+    public static final int REGISTER_HEIGHT = 450;
+    /**
      * 仅仅是为了不显示警告
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 需要修改的qq
-     */
-    private QQ loginQq;
-
     /**
      * 背景
      */
     private static BufferedImage background = null;
 
     /**
-     * 注册界面的容器
-     */
-    private QQRegisterPanel qqUpdateInfoPanel;
-
-    /**
-     * 固定宽度
-     */
-    public static final int REGISTER_WIDTH = 400;
-
-    /**
-     * 固定高度
-     */
-    public static final int REGISTER_HEIGHT = 450;
-
-    /**
-     * 关闭标签
-     */
-    private JLabel close;
-
-    /**
-     * 最小化的标签
-     */
-    private JLabel minimize;
-
-    /**
-     * 注册的标题文字
-     */
-    private JLabel registerTitle;
-
-    /**
-     * 昵称
-     */
-    private JLabel nickname;
-
-    /**
-     * 昵称的文本框
-     */
-    private JTextField nicknameText;
-
-    /**
-     * 密码:
-     */
-    private JLabel passwordLabel;
-
-    /**
-     * 密码框
-     */
-    private JPasswordField password;
-
-    /**
-     * 重复一遍密码
-     */
-    private JLabel passwordRepeatLabel;
-
-    /**
-     * 重复的密码框
-     */
-    private JPasswordField passwordRepeat;
-
-    /**
-     * 选择头像的文字
-     */
-    private JLabel selectProfiles;
-
-    /**
-     * 选择头像的选择框
-     */
-    private JComboBox<ImageIcon> profilesBox;
-
-    /**
-     * 选择性别
-     */
-    private JLabel selectGender;
-
-    /**
-     * 性别的选择框
-     */
-    private JComboBox<String> genderBox;
-
-    /**
-     * 民族选择
-     */
-    private JLabel nationJLabel;
-
-    /**
-     * 民族选择Box
-     */
-    private JComboBox<String> nationsBox;
-
-    /**
-     * 生日标签
-     */
-    private JLabel birthdayJLabel;
-
-    /**
-     * 生日中年的标签
-     */
-    private JLabel yearLabel;
-
-    /**
-     * 年的盒子
-     */
-    private JComboBox<String> yearsBox;
-
-    /**
-     * 月
-     */
-    private JLabel monthLabel;
-
-    /**
-     * 年的盒子, 从1970开始, 2019 结束
-     */
-    private JComboBox<String> monthsBox;
-
-    /**
-     * 日
-     */
-    private JLabel dayLabel;
-
-    /**
-     * 日的选择, 1-31 , 有一个bug, 按说应该把这个跟月份进行关联, 但是为了方便, 这边没有写
-     */
-    private JComboBox<String> daysBox;
-
-    /**
-     * 地址
-     */
-    private JLabel addressJLabel;
-
-    /**
-     * 国家
-     */
-    private JLabel countryJLabel;
-
-    /**
-     * 国家框
-     */
-    private JTextField countryField;
-
-    /**
-     * 省
-     */
-    private JLabel provinceJLabel;
-
-    /**
-     * 省的输入框
-     */
-    private JTextField provinceField;
-
-    /**
-     * 城市
-     */
-    private JLabel cityJLabel;
-
-    /**
-     * 城市的输入框
-     */
-    private JTextField cityField;
-
-    /**
-     * 电子邮件
-     */
-    private JLabel emailLabel;
-
-    /**
-     * 输入右键的框
-     */
-    private JTextField emailField;
-
-    /**
-     * 提交按钮
-     */
-    private JButton commitButton;
-
-    /**
-     * 重置按钮
-     */
-    private JButton resetButton;
-
-    /**
-     * 手型的鼠标
-     */
-    private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
-
-    /**
      * 读取图片
      */
     static {
         try {
-            background = ImageIO.read(new File("static/RegisterImages/register_background.png"));
+            background = ImageIO.read(Objects.requireNonNull(QQUpdateInfoFrame.class.getResourceAsStream("/static/RegisterImages" +
+                    "/register_background.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 需要修改的qq
+     */
+    private final QQ loginQq;
+    /**
+     * 手型的鼠标
+     */
+    private final Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
+    /**
+     * 右上角的监听
+     */
+    private final MouseListener rightUp = new RightUp();
+    /**
+     * 字体
+     */
+    private final Font font = new Font("宋体", Font.ITALIC, 16);
+    /**
+     * 颜色
+     */
+    private final Color color = new Color(1, 126, 177);
+    /**
+     * 输入框中的字体
+     */
+    private final Font enterFont = new Font("宋体", Font.PLAIN, 15);
+    /**
+     * 提交的事件监听
+     */
+    private final MouseListener commitMouse = new CommitMouse();
+    /**
+     * 重置按钮的事件监听
+     */
+    private final MouseListener resetMouse = new ResetMouse();
+    /**
+     * 焦点监听, 主要是为了对有默认值的设置
+     */
+    private final FocusListener foucsListener = new FocusEvent();
+    /**
+     * 是否可以拖拽
+     */
+    protected boolean isDragged;
+    /**
+     * 注册界面的容器
+     */
+    private QQRegisterPanel qqUpdateInfoPanel;
+    /**
+     * 关闭标签
+     */
+    private JLabel close;
+    /**
+     * 最小化的标签
+     */
+    private JLabel minimize;
+    /**
+     * 注册的标题文字
+     */
+    private JLabel registerTitle;
+    /**
+     * 昵称
+     */
+    private JLabel nickname;
+    /**
+     * 昵称的文本框
+     */
+    private JTextField nicknameText;
+    /**
+     * 密码:
+     */
+    private JLabel passwordLabel;
+    /**
+     * 密码框
+     */
+    private JPasswordField password;
+    /**
+     * 重复一遍密码
+     */
+    private JLabel passwordRepeatLabel;
+    /**
+     * 重复的密码框
+     */
+    private JPasswordField passwordRepeat;
+    /**
+     * 选择头像的文字
+     */
+    private JLabel selectProfiles;
+    /**
+     * 选择头像的选择框
+     */
+    private JComboBox<ImageIcon> profilesBox;
+    /**
+     * 选择性别
+     */
+    private JLabel selectGender;
+    /**
+     * 性别的选择框
+     */
+    private JComboBox<String> genderBox;
+    /**
+     * 民族选择
+     */
+    private JLabel nationJLabel;
+    /**
+     * 民族选择Box
+     */
+    private JComboBox<String> nationsBox;
+    /**
+     * 生日标签
+     */
+    private JLabel birthdayJLabel;
+    /**
+     * 生日中年的标签
+     */
+    private JLabel yearLabel;
+    /**
+     * 年的盒子
+     */
+    private JComboBox<String> yearsBox;
+    /**
+     * 月
+     */
+    private JLabel monthLabel;
+    /**
+     * 年的盒子, 从1970开始, 2019 结束
+     */
+    private JComboBox<String> monthsBox;
+    /**
+     * 日
+     */
+    private JLabel dayLabel;
+    /**
+     * 日的选择, 1-31 , 有一个bug, 按说应该把这个跟月份进行关联, 但是为了方便, 这边没有写
+     */
+    private JComboBox<String> daysBox;
+    /**
+     * 地址
+     */
+    private JLabel addressJLabel;
+    /**
+     * 国家
+     */
+    private JLabel countryJLabel;
+    /**
+     * 国家框
+     */
+    private JTextField countryField;
 
     // private String[] dateKindSelect = { "公历", "农历" };// 为下拉框添加内容
     // private String[] months = { "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月",
     // "九月", "十月", "十一月", "十二月" };// 为下拉框添加内容
     // private String[] constellation = { "白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座",
     // "天秤座", "天蝎座", "射手座", "水瓶座", "魔羯座", "双鱼座" };
+    /**
+     * 省
+     */
+    private JLabel provinceJLabel;
+    /**
+     * 省的输入框
+     */
+    private JTextField provinceField;
+    /**
+     * 城市
+     */
+    private JLabel cityJLabel;
+    /**
+     * 城市的输入框
+     */
+    private JTextField cityField;
+    /**
+     * 电子邮件
+     */
+    private JLabel emailLabel;
+    /**
+     * 输入右键的框
+     */
+    private JTextField emailField;
+    /**
+     * 提交按钮
+     */
+    private JButton commitButton;
+    /**
+     * 重置按钮
+     */
+    private JButton resetButton;
+    /**
+     * 临时变量
+     */
+    private Point tempPoint = null;
+    /**
+     * 位置
+     */
+    private Point location = null;
 
     /**
      * 空参构造方法
@@ -251,102 +255,45 @@ public class QQUpdateInfoFrame extends CenterFrame {
 
     }
 
-    /**
-     * 右上角的监听
-     */
-    private MouseListener rightUp = new RightUp();
-
-    /**
-     * 字体
-     */
-    private Font font = new Font("宋体", Font.ITALIC, 16);
-
-    /**
-     * 颜色
-     */
-    private Color color = new Color(1, 126, 177);
-
-    /**
-     * 输入框中的字体
-     */
-    private Font enterFont = new Font("宋体", Font.PLAIN, 15);
-
-    /**
-     * 提交的事件监听
-     */
-    private MouseListener commitMouse = new CommitMouse();
-
-    /**
-     * 重置按钮的事件监听
-     */
-    private MouseListener resetMouse = new ResetMouse();
-
-    /**
-     * 焦点监听, 主要是为了对有默认值的设置
-     */
-    private FocusListener foucsListener = new FocusEvent();
-
     @Override
     protected void addComponent() {
 
-        /**
-         * 性别数据
+        /*
+          性别数据
          */
         String[] genders = {loginQq.getGender(), "未选择", "男", "女"};
 
-        /**
-         * 年的数据
+        /*
+          年的数据
          */
-        String[] years = {loginQq.getBirthday().substring(0, 4), "1970", "1971", "1972", "1973", "1974", "1975",
-                "1976", "1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988",
-                "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001",
-                "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014",
-                "2015", "2016", "2017", "2018", "2019"};
+        String[] years = {loginQq.getBirthday().substring(0, 4), "1970", "1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019"};
 
-        /**
-         * 月的数据
+        /*
+          月的数据
          */
-        String[] months = {loginQq.getBirthday().substring(5, 7), "01", "02", "03", "04", "05", "06", "07", "08", "09",
-                "10", "11", "12"};
+        String[] months = {loginQq.getBirthday().substring(5, 7), "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
 
-        /**
-         * 日的数据, 这里有一个BUG
+        /*
+          日的数据, 这里有一个BUG
          */
-        String[] days = {loginQq.getBirthday().substring(8, 10), "01", "02", "03", "04", "05", "06", "07", "08", "09",
-                "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26",
-                "27", "28", "29", "30", "31"};
+        String[] days = {loginQq.getBirthday().substring(8, 10), "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
         // TODO 在这里我应该写一下days跟月份有关的方法
 
-        /**
-         * 几个头像, 还可以再添加
+        /*
+          几个头像, 还可以再添加
          */
-        ImageIcon[] profiles = {new ImageIcon(loginQq.getPhoto()),
-                new ImageIcon("static/RegisterImages/Profiles/0_online.png"),
-                new ImageIcon("static/RegisterImages/Profiles/1_online.png"),
-                new ImageIcon("static/RegisterImages/Profiles/2_online.png"),
-                new ImageIcon("static/RegisterImages/Profiles/3_online.png"),
-                new ImageIcon("static/RegisterImages/Profiles/4_online.png"),
-                new ImageIcon("static/RegisterImages/Profiles/5_online.png"),
-                new ImageIcon("static/RegisterImages/Profiles/6_online.png"),
-                new ImageIcon("static/RegisterImages/Profiles/7_online.png"),
-                new ImageIcon("static/RegisterImages/Profiles/8_online.png"),
-                new ImageIcon("static/RegisterImages/Profiles/9_online.png"),
-                new ImageIcon("static/RegisterImages/Profiles/10_online.png")};
+        ImageIcon[] profiles = {new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource(loginQq.getPhoto()))), new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/RegisterImages/Profiles" + "/0_online.png"))), new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/RegisterImages/Profiles" + "/1_online.png"))), new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/RegisterImages/Profiles" + "/2_online.png"))), new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/RegisterImages/Profiles" + "/3_online.png"))), new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/RegisterImages/Profiles" + "/4_online.png"))), new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/RegisterImages/Profiles" + "/5_online.png"))), new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/RegisterImages/Profiles" + "/6_online.png"))), new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/RegisterImages/Profiles" + "/7_online.png"))), new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/RegisterImages/Profiles" + "/8_online.png"))), new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/RegisterImages/Profiles" + "/9_online.png"))), new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static/RegisterImages/Profiles" + "/10_online.png")))};
 
-        /**
-         * 民族的数据
+        /*
+          民族的数据
          */
-        String[] nations = {loginQq.getNation(), "汉族 ", "满族 ", "蒙古族 ", "回族 ", "藏族 ", "维吾尔族 ", "苗族 ", "彝族 ", "壮族 ",
-                "布依族 ", "侗族 ", "瑶族 ", "白族 ", "土家族 ", "哈尼族 ", "哈萨克族 ", "傣族 ", "黎族 ", "傈僳族 ", "佤族 ", "畲族 ", "高山族 ",
-                "拉祜族 ", "水族 ", "东乡族 ", "纳西族 ", "景颇族 ", "柯尔克孜族 ", "土族 ", "达斡尔族 ", "仫佬族 ", "羌族 ", "布朗族 ", "撒拉族 ", "毛南族 ",
-                "仡佬族 ", "锡伯族 ", "阿昌族 ", "普米族 ", "朝鲜族 ", "塔吉克族 ", "怒族 ", "乌孜别克族 ", "俄罗斯族 ", "鄂温克族 ", "德昂族 ", "保安族 ",
-                "裕固族 ", "京族 ", "塔塔尔族 ", "独龙族 ", "鄂伦春族 ", "赫哲族 ", "门巴族 ", "珞巴族 ", "基诺族"};
+        String[] nations = {loginQq.getNation(), "汉族 ", "满族 ", "蒙古族 ", "回族 ", "藏族 ", "维吾尔族 ", "苗族 ", "彝族 ", "壮族 ", "布依族 ", "侗族 ", "瑶族 ", "白族 ", "土家族 ", "哈尼族 ", "哈萨克族 ", "傣族 ", "黎族 ", "傈僳族 ", "佤族 ", "畲族 ", "高山族 ", "拉祜族 ", "水族 ", "东乡族 ", "纳西族 ", "景颇族 ", "柯尔克孜族 ", "土族 ", "达斡尔族 ", "仫佬族 ", "羌族 ", "布朗族 ", "撒拉族 ", "毛南族 ", "仡佬族 ", "锡伯族 ", "阿昌族 ", "普米族 ", "朝鲜族 ", "塔吉克族 ", "怒族 ", "乌孜别克族 ", "俄罗斯族 ", "鄂温克族 ", "德昂族 ", "保安族 ", "裕固族 ", "京族 ", "塔塔尔族 ", "独龙族 ", "鄂伦春族 ", "赫哲族 ", "门巴族 ", "珞巴族 ", "基诺族"};
 
         qqUpdateInfoPanel = new QQRegisterPanel();
         qqUpdateInfoPanel.setPreferredSize(new Dimension(REGISTER_WIDTH, REGISTER_HEIGHT));
 
         // 关闭
-        close = new JLabel(new ImageIcon("static/RegisterImages/close.png"));
+        close = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static" + "/RegisterImages/close.png"))));
         close.setBounds(375, 0, 25, 20);
         qqUpdateInfoPanel.add(close);
         close.setCursor(cursor);// 把鼠标弄成手的形状
@@ -354,7 +301,7 @@ public class QQUpdateInfoFrame extends CenterFrame {
         close.setToolTipText("关闭");
 
         // 最小化
-        minimize = new JLabel(new ImageIcon("static/RegisterImages/minimize.png"));
+        minimize = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static" + "/RegisterImages/minimize.png"))));
         minimize.setBounds(350, 0, 25, 20);
         qqUpdateInfoPanel.add(minimize);
         minimize.setCursor(cursor);// 把鼠标弄成手的形状
@@ -593,21 +540,6 @@ public class QQUpdateInfoFrame extends CenterFrame {
     }
 
     /**
-     * 是否可以拖拽
-     */
-    protected boolean isDragged;
-
-    /**
-     * 临时变量
-     */
-    private Point tempPoint = null;
-
-    /**
-     * 位置
-     */
-    private Point location = null;
-
-    /**
      * 设置我们的面板可以移动,
      */
     private void setDragable() {
@@ -628,8 +560,7 @@ public class QQUpdateInfoFrame extends CenterFrame {
         this.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent e) {
                 if (isDragged) {
-                    location = new Point(QQUpdateInfoFrame.this.getLocation().x + e.getX() - tempPoint.x,
-                            QQUpdateInfoFrame.this.getLocation().y + e.getY() - tempPoint.y);
+                    location = new Point(QQUpdateInfoFrame.this.getLocation().x + e.getX() - tempPoint.x, QQUpdateInfoFrame.this.getLocation().y + e.getY() - tempPoint.y);
                     QQUpdateInfoFrame.this.setLocation(location);
                 }
             }
@@ -671,9 +602,9 @@ public class QQUpdateInfoFrame extends CenterFrame {
         @Override
         public void mouseEntered(MouseEvent e) {
             if (e.getSource() == close) {
-                close.setIcon(new ImageIcon("static/LoginImages/loginclose.png"));
+                close.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static" + "/LoginImages/loginclose.png"))));
             } else if (e.getSource() == minimize) {
-                minimize.setIcon(new ImageIcon("static/LoginImages/loginMin.png"));
+                minimize.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static" + "/LoginImages/loginMin.png"))));
             } else {
             }
         }
@@ -681,9 +612,9 @@ public class QQUpdateInfoFrame extends CenterFrame {
         @Override
         public void mouseExited(MouseEvent e) {
             if (e.getSource() == close) {
-                close.setIcon(new ImageIcon("static/RegisterImages/close.png")); // 设置为原来的样子
+                close.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static" + "/RegisterImages/close.png")))); // 设置为原来的样子
             } else if (e.getSource() == minimize) {
-                minimize.setIcon(new ImageIcon("static/RegisterImages/minimize.png")); // 设置为原来的样子
+                minimize.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame2.class.getResource("/static" + "/RegisterImages/minimize.png")))); // 设置为原来的样子
             } else {
             }
         }
@@ -733,16 +664,13 @@ public class QQUpdateInfoFrame extends CenterFrame {
                     String photo = String.valueOf(profilesBox.getSelectedItem());
                     String nickname = nicknameText.getText();
                     String gender = String.valueOf(genderBox.getSelectedItem());
-                    String birthday = String.valueOf(String.valueOf(yearsBox.getSelectedItem()) + "-"
-                            + String.valueOf(monthsBox.getSelectedItem()) + "-"
-                            + String.valueOf(daysBox.getSelectedItem()));
+                    String birthday = yearsBox.getSelectedItem() + "-" + monthsBox.getSelectedItem() + "-" + daysBox.getSelectedItem();
                     String country = countryField.getText();
                     String province = provinceField.getText();
                     String city = cityField.getText();
                     String nation = String.valueOf(nationsBox.getSelectedItem());
 
-                    boolean updateInfo = QQMainController.getInstance().updateInfo(loginQq, nickname, password, photo,
-                            gender, birthday, country, province, city, email, nation);
+                    boolean updateInfo = QQMainController.getInstance().updateInfo(loginQq, nickname, password, photo, gender, birthday, country, province, city, email, nation);
                     if (updateInfo) {
                         JOptionPane.showMessageDialog(qqUpdateInfoPanel, "修改信息成功, 请重启QQ后生效");
                         QQUpdateInfoFrame.this.dispose();

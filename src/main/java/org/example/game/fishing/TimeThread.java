@@ -19,7 +19,7 @@ public class TimeThread extends Thread {
             }
             try {
                 Thread.sleep(1000);// 每一千毫秒执行一次
-                Helper.mf.time.setText(Helper.times + "");// 设置游戏界面时间
+                Helper.mf.time.setText(String.valueOf(Helper.times));// 设置游戏界面时间
                 Helper.times--;//
             } catch (InterruptedException e) {
                 e.printStackTrace();

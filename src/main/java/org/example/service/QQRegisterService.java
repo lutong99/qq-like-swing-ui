@@ -15,6 +15,6 @@ public interface QQRegisterService extends QQService {
      * @param qq 我们传入的没有密码的QQ号码
      * @return 返回注册成功后的QQ号码
      */
-    public abstract String registerQQ(QQ qq);
+     String registerQQ(QQ qq);
 
 }

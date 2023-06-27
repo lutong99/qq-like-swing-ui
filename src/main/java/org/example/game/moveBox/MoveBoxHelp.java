@@ -6,7 +6,7 @@ import java.awt.*;
 /**
  * 推箱子的帮助界面
  *
- * @author Lutong99
+ * @author 来源自网络
  */
 public class MoveBoxHelp extends JFrame {
     /**

@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -48,7 +49,8 @@ public class Addfish extends Thread {
             BufferedImage tempimage = null;// 临时存放鱼的缓冲区
             try {
                 // 根据fishname使用for循环将一种鱼的图片放入数组中
-                tempimage = ImageIO.read(new File("static/Fishing/images/" + fishname + "_0" + (i + 1) + ".png"));
+                tempimage = ImageIO.read(Objects.requireNonNull(Addfish.class.getResourceAsStream("/static/Fishing" +
+                        "/images/" + fishname + "_0" + (i + 1) + ".png")));
             } catch (IOException e) {
                 e.printStackTrace();
             }

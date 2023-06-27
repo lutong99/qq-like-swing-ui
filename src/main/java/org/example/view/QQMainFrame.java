@@ -7,8 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Objects;
 
 /**
  * qq 登陆完成的主界面, 包括消息列表, 好友列表, 还有游戏呀, 云呀, 查找好友等等的一些小功能
@@ -39,7 +40,7 @@ public class QQMainFrame extends CenterFrame {
      */
     static {
         try {
-            mainImage = ImageIO.read(new File("static/MainImages/MainBackground2.png"));
+            mainImage = ImageIO.read(Objects.requireNonNull(QQLoginFrame.class.getResourceAsStream("/static/MainImages/MainBackground2.png")));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -202,10 +203,14 @@ public class QQMainFrame extends CenterFrame {
     /**
      * 背景图片
      */
-    private File[] backgroundIamges = {new File("static/MainImages/MainBackground2.png"),
-            new File("static/MainImages/MainBackground3.jpg"), new File("static/MainImages/MainBackground4.jpg"),
-            new File("static/MainImages/MainBackground5.jpg"), new File("static/MainImages/MainBackground6.jpg"),
-            new File("static/MainImages/MainBackground7.png")};
+    private String[] backgroundIamges = {
+            "/static/MainImages/MainBackground2.png",
+            "/static/MainImages/MainBackground3.jpg",
+            "/static/MainImages/MainBackground4.jpg",
+            "/static/MainImages/MainBackground5.jpg",
+            "/static/MainImages/MainBackground6.jpg",
+            "/static/MainImages/MainBackground7.png"
+    };
     /**
      * 拖动状态
      */
@@ -243,18 +248,13 @@ public class QQMainFrame extends CenterFrame {
     public QQMainFrame(QQ loginQq) {
         this.loginQq = loginQq;
         init(null, null);
-        this.setIconImage(new ImageIcon(loginQq.getPhoto()).getImage());
+        Image image = new ImageIcon(Objects.requireNonNull(QQMainFrame.class.getResource(loginQq.getPhoto()))).getImage();
+        this.setIconImage(image);
         this.setBounds(1400, 200, MAIN_WIDTH, MAIN_HEIGHT); // 让这个面板在右边
 
-        SystemTray systemTray = SystemTray.getSystemTray();
-        ImageIcon imageIcon = new ImageIcon(loginQq.getPhoto());
-        trayIcon = new TrayIcon(imageIcon.getImage());
+        trayIcon = new TrayIcon(image);
         trayIcon.setImageAutoSize(true);// 自适应托盘大小
-        try {
-            systemTray.add(trayIcon);
-        } catch (AWTException e) {
-            e.printStackTrace();
-        }
+
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -282,8 +282,16 @@ public class QQMainFrame extends CenterFrame {
 //		i2 = i1;
 
         // 显示托盘的菜单
-        showItem = new MenuItem("Show Main Frame");
-        exitItem = new MenuItem("Exit");
+        showItem = new MenuItem("显示主界面");
+        exitItem = new MenuItem("退出");
+        Charset charset = Charset.forName("GBK");
+        showItem.setLabel(new String("Show Main Frame".getBytes(charset), charset));
+        exitItem.setLabel(new String("Exit".getBytes(charset), charset));
+        // 设置字体为"微软雅黑"
+//        Font font = new Font("微软雅黑", Font.PLAIN, 12);
+        Font font = new Font("SimSun", Font.PLAIN, 12);
+        showItem.setFont(font);
+        exitItem.setFont(font);
         showItem.addActionListener(popupDownMenu);
         exitItem.addActionListener(popupDownMenu);
         popup = new PopupMenu();
@@ -291,6 +299,12 @@ public class QQMainFrame extends CenterFrame {
         popup.add(exitItem);
 
         trayIcon.setPopupMenu(popup);
+        SystemTray systemTray = SystemTray.getSystemTray();
+        try {
+            systemTray.add(trayIcon);
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -304,7 +318,8 @@ public class QQMainFrame extends CenterFrame {
         qqMainPanel.setPreferredSize(new Dimension(MAIN_WIDTH, MAIN_HEIGHT));
 
         // 关闭
-        closeJLabel = new JLabel(new ImageIcon("static/MainImages/Mainyclose.png"));
+        closeJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/MainImages/Mainyclose.png"))));
         closeJLabel.setBounds(250, 0, 29, 28);
         qqMainPanel.add(closeJLabel);
         closeJLabel.setCursor(cursor);
@@ -312,7 +327,8 @@ public class QQMainFrame extends CenterFrame {
         closeJLabel.setToolTipText("关闭");
 
         // 最小化
-        minimizeJLabel = new JLabel(new ImageIcon("static/MainImages/MainyMin.png"));
+        minimizeJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/MainImages/MainyMin.png"))));
         minimizeJLabel.setBounds(222, 0, 29, 28);
         qqMainPanel.add(minimizeJLabel);
         minimizeJLabel.setCursor(cursor);
@@ -320,19 +336,20 @@ public class QQMainFrame extends CenterFrame {
         minimizeJLabel.setToolTipText("最小化");
 
         // 我的状态
-        myStateJLabel = new JLabel(new ImageIcon("static/MainImages/s_online.png"));
+        myStateJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/MainImages/s_online.png"))));
         myStateJLabel.setBounds(55, 95, 15, 15);
         qqMainPanel.add(myStateJLabel);
 
         // 头像
-        profileJLabel = new JLabel(new ImageIcon(loginQq.getPhoto()));
+        profileJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQ.class.getResource(loginQq.getPhoto()))));
         profileJLabel.setBounds(10, 50, 60, 60);
         qqMainPanel.add(profileJLabel);
         profileJLabel.setCursor(cursor);
         profileJLabel.addMouseListener(mouseClick);
 
         // 状态选择
-        stateSelect = new JLabel(new ImageIcon("static/LoginImages/s_online.png"));
+        stateSelect = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static/LoginImages/s_online.png"))));
         stateSelect.setBounds(140, 46, 15, 15);
         qqMainPanel.add(stateSelect);
         stateSelect.addMouseListener(showStates);
@@ -349,13 +366,17 @@ public class QQMainFrame extends CenterFrame {
 
         // 状态选择
         states = new JPopupMenu();
-        onlineState = new JMenuItem("我在线上", new ImageIcon("static/LoginImages/s_online.png"));
+        onlineState = new JMenuItem("我在线上", new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource(
+                "/static/LoginImages/s_online.png"))));
         onlineState.addActionListener(setState);
-        leaveState = new JMenuItem("离开", new ImageIcon("static/LoginImages/s_leave.png"));
+        leaveState = new JMenuItem("离开", new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/LoginImages/s_leave.png"))));
         leaveState.addActionListener(setState);
-        busyState = new JMenuItem("忙碌", new ImageIcon("static/LoginImages/s_busy.png"));
+        busyState = new JMenuItem("忙碌", new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/LoginImages/s_busy.png"))));
         busyState.addActionListener(setState);
-        hideState = new JMenuItem("隐身", new ImageIcon("static/LoginImages/s_hide.png"));
+        hideState = new JMenuItem("隐身", new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/LoginImages/s_hide.png"))));
         hideState.addActionListener(setState);
         states.add(onlineState);
         states.addSeparator();
@@ -366,7 +387,8 @@ public class QQMainFrame extends CenterFrame {
         states.add(hideState);
 
         // 游戏和皮肤 还有下面
-        themeJLabel = new JLabel(new ImageIcon("static/MainImages/theme.png"));
+        themeJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/MainImages/theme.png"))));
         themeJLabel.setBounds(250, 110, 20, 20);
         qqMainPanel.add(themeJLabel);
         themeJLabel.setCursor(cursor);
@@ -374,7 +396,8 @@ public class QQMainFrame extends CenterFrame {
         themeJLabel.addMouseListener(mouseClick);
 
         // 游戏
-        qqGameJLabel = new JLabel(new ImageIcon("static/MainImages/qqGame.png"));
+        qqGameJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/MainImages/qqGame.png"))));
         qqGameJLabel.setBounds(215, 105, 28, 28);
         qqMainPanel.add(qqGameJLabel);
         qqGameJLabel.setCursor(cursor);
@@ -382,7 +405,8 @@ public class QQMainFrame extends CenterFrame {
         qqGameJLabel.addMouseListener(mouseClick);
 
         // qq音乐
-        qqMusicJLabel = new JLabel(new ImageIcon("static/MainImages/qqMusic.png"));
+        qqMusicJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/MainImages/qqMusic.png"))));
         qqMusicJLabel.setBounds(180, 110, 20, 20);
         qqMainPanel.add(qqMusicJLabel);
         qqMusicJLabel.setCursor(cursor);
@@ -390,7 +414,8 @@ public class QQMainFrame extends CenterFrame {
         qqMusicJLabel.addMouseListener(mouseClick);
 
         // 微云
-        qqCloudJLabel = new JLabel(new ImageIcon("static/MainImages/qqCloud.png"));
+        qqCloudJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/MainImages/qqCloud.png"))));
         qqCloudJLabel.setBounds(145, 110, 20, 20);
         qqMainPanel.add(qqCloudJLabel);
         qqCloudJLabel.setToolTipText("微云");
@@ -430,19 +455,22 @@ public class QQMainFrame extends CenterFrame {
         qqMainPanel.add(tab);
 
         // 列表
-        findFriendJLabel = new JLabel(new ImageIcon("static/MainImages/findFriend.png"));
+        findFriendJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/MainImages/findFriend.png"))));
         findFriendJLabel.setBounds(157, 576, 50, 17);
         qqMainPanel.add(findFriendJLabel);
         findFriendJLabel.setToolTipText("查找好友");
         findFriendJLabel.setCursor(cursor);
 
         // 主面板的下面
-        mainBottom = new JLabel(new ImageIcon("static/MainImages/qqBottom.png"));
+        mainBottom = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/MainImages/qqBottom.png"))));
         mainBottom.setBounds(0, 565, 280, 35);
         qqMainPanel.add(mainBottom);
 
         // QQ Logo
-        logoJLabel = new JLabel(new ImageIcon("static/MainImages/logo.png"));
+        logoJLabel = new JLabel(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                "/MainImages/logo.png"))));
         logoJLabel.setBounds(0, 0, MAIN_WIDTH, MAIN_HEIGHT);
         qqMainPanel.add(logoJLabel);
 
@@ -537,9 +565,11 @@ public class QQMainFrame extends CenterFrame {
         @Override
         public void mouseEntered(MouseEvent e) {
             if (e.getSource() == closeJLabel) {
-                closeJLabel.setIcon(new ImageIcon("static/MainImages/mainClose.png"));
+                closeJLabel.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                        "/MainImages/mainClose.png"))));
             } else if (e.getSource() == minimizeJLabel) {
-                minimizeJLabel.setIcon(new ImageIcon("static/MainImages/MainMin.png"));
+                minimizeJLabel.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                        "/MainImages/MainMin.png"))));
             } else {
 
             }
@@ -548,9 +578,11 @@ public class QQMainFrame extends CenterFrame {
         @Override
         public void mouseExited(MouseEvent e) {
             if (e.getSource() == closeJLabel) {
-                closeJLabel.setIcon(new ImageIcon("static/MainImages/Mainyclose.png")); // 设置为原来的样子
+                closeJLabel.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                        "/MainImages/Mainyclose.png")))); // 设置为原来的样子
             } else if (e.getSource() == minimizeJLabel) {
-                minimizeJLabel.setIcon(new ImageIcon("static/MainImages/MainyMin.png")); // 设置为原来的样子
+                minimizeJLabel.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                        "/MainImages/MainyMin.png")))); // 设置为原来的样子
             } else {
 
             }
@@ -570,7 +602,8 @@ public class QQMainFrame extends CenterFrame {
 
             } else if (e.getSource() == minimizeJLabel) {
                 QQMainFrame.this.setExtendedState(ICONIFIED); // 最小化, 说实话我连源码写的注释翻译完成之后都不认识, 但是这个可以最小化, 还是很厉害的
-                minimizeJLabel.setIcon(new ImageIcon("static/MainImages/MainyMin.png")); // 设置为原来的样子
+                minimizeJLabel.setIcon(new ImageIcon(Objects.requireNonNull(QQLoginFrame.class.getResource("/static" +
+                        "/MainImages/MainyMin.png")))); // 设置为原来的样子
             } else {
                 // TODO 写一点点弹框出来的东西
             }
@@ -586,20 +619,20 @@ public class QQMainFrame extends CenterFrame {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == onlineState) {
                 // 点击菜单项改变这个用户的状态
-                stateSelect.setIcon(new ImageIcon("static/LoginImages/s_online.png"));
-                myStateJLabel.setIcon(new ImageIcon("static/LoginImages/s_online.png"));
+                stateSelect.setIcon(new ImageIcon("/static/LoginImages/s_online.png"));
+                myStateJLabel.setIcon(new ImageIcon("/static/LoginImages/s_online.png"));
 
             } else if (e.getSource() == hideState) {
-                stateSelect.setIcon(new ImageIcon("static/LoginImages/s_hide.png"));
-                myStateJLabel.setIcon(new ImageIcon("static/LoginImages/s_hide.png"));
+                stateSelect.setIcon(new ImageIcon("/static/LoginImages/s_hide.png"));
+                myStateJLabel.setIcon(new ImageIcon("/static/LoginImages/s_hide.png"));
 
             } else if (e.getSource() == busyState) {
-                stateSelect.setIcon(new ImageIcon("static/LoginImages/s_busy.png"));
-                myStateJLabel.setIcon(new ImageIcon("static/LoginImages/s_busy.png"));
+                stateSelect.setIcon(new ImageIcon("/static/LoginImages/s_busy.png"));
+                myStateJLabel.setIcon(new ImageIcon("/static/LoginImages/s_busy.png"));
 
             } else if (e.getSource() == leaveState) {
-                stateSelect.setIcon(new ImageIcon("static/LoginImages/s_leave.png"));
-                myStateJLabel.setIcon(new ImageIcon("static/LoginImages/s_leave.png"));
+                stateSelect.setIcon(new ImageIcon("/static/LoginImages/s_leave.png"));
+                myStateJLabel.setIcon(new ImageIcon("/static/LoginImages/s_leave.png"));
             } else {
 
             }
@@ -639,7 +672,7 @@ public class QQMainFrame extends CenterFrame {
             if (e.getSource() == qqGameJLabel) {
                 new QQGameSelectorFrame();
             } else if (e.getSource() == qqMusicJLabel) {
-                String cmd = "D:\\Program Files (x86)\\Tencent\\QQMusic\\QQMusic.exe";
+                String cmd = "F:\\Program Files (x86)\\Tencent\\QQMusic\\QQMusic.exe";
                 try {
                     Runtime.getRuntime().exec(cmd);
                 } catch (IOException e1) {
@@ -650,7 +683,8 @@ public class QQMainFrame extends CenterFrame {
             } else if (e.getSource() == themeJLabel) {
                 try {
 //					random = new Random();
-                    mainImage = ImageIO.read(backgroundIamges[i]);
+                    mainImage =
+                            ImageIO.read(Objects.requireNonNull(QQLoginFrame.class.getResourceAsStream(backgroundIamges[i])));
                     i++;
                     if (i > 5) {
                         i = 0;

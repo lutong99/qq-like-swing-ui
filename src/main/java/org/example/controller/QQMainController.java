@@ -21,12 +21,12 @@ public class QQMainController extends QQController {
     /**
      * 锁, 控制线程安全
      */
-    private static ReentrantLock lock = new ReentrantLock();
+    private static final ReentrantLock lock = new ReentrantLock();
 
     /**
      * 关联一个MainService
      */
-    private QQMainService qqMainService = new QQMainServiceImpl();
+    private final QQMainService qqMainService = new QQMainServiceImpl();
 
     /**
      * 私有化构造器, 做一个单例模式

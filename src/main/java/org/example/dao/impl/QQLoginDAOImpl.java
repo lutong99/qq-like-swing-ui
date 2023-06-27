@@ -20,8 +20,7 @@ public class QQLoginDAOImpl implements QQLoginDAO {
         try {
             BeanHandler<QQ> rsh = new BeanHandler<QQ>(QQ.class);
             Object[] params = {qq.getNumber(), MD5Utils.encrypByMD5(qq.getPassword())};
-            QQ query = queryRunner.query(sql, rsh, params);
-            return query;
+            return queryRunner.query(sql, rsh, params);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

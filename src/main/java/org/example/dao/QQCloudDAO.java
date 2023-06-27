@@ -14,7 +14,7 @@ public interface QQCloudDAO extends QQDAO {
      * @param qq         微云的qq用户
      * @return 我们上传的自定义文件类
      */
-    public abstract FileCustom uploadFiles(FileCustom fileUpload, QQ qq);
+     FileCustom uploadFiles(FileCustom fileUpload, QQ qq);
 
     /**
      * 获取所有的数据, 从数据库中
@@ -22,7 +22,7 @@ public interface QQCloudDAO extends QQDAO {
      * @param qq qq用户
      * @return 所有数据的Vector
      */
-    public abstract Vector<Vector<String>> getDatas(QQ qq);
+     Vector<Vector<String>> getDatas(QQ qq);
 
     /**
      * 下载文件的方法
@@ -31,7 +31,7 @@ public interface QQCloudDAO extends QQDAO {
      * @param qq            用户
      * @return 下载的自定义文件类
      */
-    public abstract FileCustom downloadFiles(FileCustom downloadFiles, QQ qq);
+     FileCustom downloadFiles(FileCustom downloadFiles, QQ qq);
 
     /**
      * 删除文件的方法
@@ -40,6 +40,6 @@ public interface QQCloudDAO extends QQDAO {
      * @param qq          qq用户
      * @return {@code true} 删除成功 {@code false} 删除失败
      */
-    public abstract boolean deleteFiles(FileCustom deleteFiles, QQ qq);
+     boolean deleteFiles(FileCustom deleteFiles, QQ qq);
 
 }

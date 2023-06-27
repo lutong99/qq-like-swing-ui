@@ -8,8 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * 这个框继承自我们的{@link CenterFrame}, 我们可以在这里输入qq的用户名和密码后, 进行登陆,
@@ -21,168 +22,173 @@ import java.io.IOException;
 public class QQLoginFrame extends CenterFrame {
 
     /**
+     * 登陆面板的固定宽度
+     */
+    public static final int LOGIN_WIDTH = 430;
+    /**
+     * 登陆面板的固定高度
+     */
+    public static final int LOGIN_HEIGHT = 310;
+    /**
      * 没有什么实际意义, 完全是为了避免警告
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 登陆板 这个是一个内部类的实例, 因为我们只在这一个类中使用
-     */
-    private LoginPanel loginPanel;
-
-    /**
-     * 关闭, 主要是为了美化界面
-     */
-    private JLabel close;
-
-    /**
-     * 最小化, 也是为了美化界面
-     */
-    private JLabel minimize;
-
-    /**
-     * 弹出的框, 和最小化, 关闭在一起的
-     */
-    private JLabel pop;
-
     /**
      * 我们的背景
      */
     private static BufferedImage backgroundImage;
 
-    /**
-     * 登陆面板的固定宽度
+    /*
+      读取背景的图片
      */
-    public static final int LOGIN_WIDTH = 430;
+    static {
+        try {
+            // 读取我们的背景
+            InputStream inputStream = QQLoginFrame.class.getResourceAsStream("/static/LoginImages/login.png");
+            backgroundImage = ImageIO.read(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
-     * 登陆面板的固定高度
+     * 是否可以拖拽
      */
-    public static final int LOGIN_HEIGHT = 310;
-
+    protected boolean isDragged;
+    /**
+     * 登陆板 这个是一个内部类的实例, 因为我们只在这一个类中使用
+     */
+    private LoginPanel loginPanel;
+    /**
+     * 关闭, 主要是为了美化界面
+     */
+    private JLabel close;
+    /**
+     * 最小化, 也是为了美化界面
+     */
+    private JLabel minimize;
+    /**
+     * 弹出的框, 和最小化, 关闭在一起的
+     */
+    private JLabel pop;
     /**
      * 记住密码
      */
     private JCheckBox rememberPassword;
-
     /**
      * 自动登录
      */
     private JCheckBox autoLogin;
 
+//	private JComboBox<String> selectQQNumber;
     /**
      * 输入qq号码的文本框
      */
     private JTextField userName;
-
     /**
      * 密码框
      */
     private JPasswordField passwordField;
-
-//	private JComboBox<String> selectQQNumber;
-
     /**
      * 忘记密码的标签
      */
     private JLabel forgetPassword;
-
     /**
      * 注册账号的标签
      */
     private JLabel register;
-
     /**
      * 登陆的头像
      */
     private JLabel loginProfile;
-
     /**
      * 登陆的按钮
      */
     private JLabel loginButton;
-
     /**
      * 登陆状态的弹出菜单
      */
     private JPopupMenu states;
-
     /**
      * 在线状态
      */
     private JMenuItem onlineState;
-
     /**
      * 隐身状态
      */
     private JMenuItem hideState;
-
     /**
      * 忙碌状态
      */
     private JMenuItem busyState;
-
     /**
      * 离开状态
      */
     private JMenuItem leaveState;
-
     /**
      * 状态选择的标签
      */
     private JLabel stateSelect;
-
     /**
      * 显示状态的事件监听
      */
     private MouseListener showState = new ShowStates();
-
     /**
      * 获取系统图标
      */
     private SystemTray systemTray = SystemTray.getSystemTray();
-
     /**
      * 托盘图标的图像
      */
     private ImageIcon imageIcon;
-
     /**
      * 托盘图标
      */
     private TrayIcon trayIcon;
-
     /**
      * 在托盘区的右键菜单
      */
     private PopupMenu popupdownMenu;
-
     /**
      * 托盘右键菜单的显示
      */
     private MenuItem showItem;
-
     /**
      * 托盘右键菜单的退出选项
      */
     private MenuItem exitItem;
-
     /**
      * 对于我们的托盘菜单的事件监听
      */
     private ActionListener popupMenuAction = new PopupMenuAction();
-
     /**
-     * 读取背景的图片
+     * 右上角的三个按钮的鼠标监听器
      */
-    static {
-        try {
-            // 读取我们的背景
-            backgroundImage = ImageIO.read(new File("static/LoginImages/login.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    private RightUp rightUp = new RightUp();
+    /**
+     * 设置登陆状态的事件监听
+     */
+    private ActionListener setState = new SetState();
+    /**
+     * 输入的状态监听, 移开会怎么样, 不移开会怎么样
+     */
+    private FocusListener inputFoucs = new InputFocus();
+    /**
+     * 对于点击事件的所有监听
+     */
+    private MouseListener mouseClick = new MouseClick();
+    /**
+     * 鼠标的手的形状
+     */
+    private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
+    /**
+     * 临时变量
+     */
+    private Point tempPoint = null;
+    /**
+     * 位置
+     */
+    private Point location = null;
 
     /**
      * 无参构造, java bean 的反射必须, 保持优良习惯
@@ -190,8 +196,9 @@ public class QQLoginFrame extends CenterFrame {
      * 并且在我们的托盘设置一些东西
      */
     public QQLoginFrame() {
-        this.setIconImage(new ImageIcon("static/LoginImages/tray.png").getImage());
-        imageIcon = new ImageIcon("static/LoginImages/tray.png");
+        this.setIconImage(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static/LoginImages/tray.png"))).getImage());
+        imageIcon =
+                new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static/LoginImages/tray.png")));
         trayIcon = new TrayIcon(imageIcon.getImage());
         trayIcon.setImageAutoSize(true);
         try {
@@ -242,31 +249,6 @@ public class QQLoginFrame extends CenterFrame {
             }
         });
     }
-
-    /**
-     * 右上角的三个按钮的鼠标监听器
-     */
-    private RightUp rightUp = new RightUp();
-
-    /**
-     * 设置登陆状态的事件监听
-     */
-    private ActionListener setState = new SetState();
-
-    /**
-     * 输入的状态监听, 移开会怎么样, 不移开会怎么样
-     */
-    private FocusListener inputFoucs = new InputFocus();
-
-    /**
-     * 对于点击事件的所有监听
-     */
-    private MouseListener mouseClick = new MouseClick();
-
-    /**
-     * 鼠标的手的形状
-     */
-    private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
 
     @Override
     protected void addComponent() {
@@ -348,7 +330,8 @@ public class QQLoginFrame extends CenterFrame {
         forgetPassword.setCursor(cursor);// 手
 
         // 登陆按钮
-        ImageIcon buttomIcon = new ImageIcon("static/LoginImages/loginButton.png");
+        ImageIcon buttomIcon = new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                "/LoginImages/loginButton.png")));
         loginButton = new JLabel();
         loginButton.setIcon(buttomIcon);
         loginButton.setBounds(130, 270, 232, 40);
@@ -357,25 +340,31 @@ public class QQLoginFrame extends CenterFrame {
         loginButton.addMouseListener(new LoginClick());
 
         // 状态设置
-        stateSelect = new JLabel(new ImageIcon("static/LoginImages/s_online.png"));
+        stateSelect = new JLabel(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                "/LoginImages/s_online.png"))));
         stateSelect.setBounds(97, 235, 15, 15);
         loginPanel.add(stateSelect);
         stateSelect.addMouseListener(showState);
 
         // 登陆头像
-        loginProfile = new JLabel(new ImageIcon("static/LoginImages/loginProfile.png"));
+        loginProfile = new JLabel(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                "/LoginImages/loginProfile.png"))));
         loginProfile.setBounds(50, 190, 60, 60);
         loginPanel.add(loginProfile);
 
         // 状态弹框
         states = new JPopupMenu();
-        onlineState = new JMenuItem("我在线上", new ImageIcon("static/LoginImages/s_online.png"));
+        onlineState = new JMenuItem("我在线上", new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource(
+                "/static/LoginImages/s_online.png"))));
         onlineState.addActionListener(setState);
-        leaveState = new JMenuItem("离开", new ImageIcon("static/LoginImages/s_leave.png"));
+        leaveState = new JMenuItem("离开", new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                "/LoginImages/s_leave.png"))));
         leaveState.addActionListener(setState);
-        busyState = new JMenuItem("忙碌", new ImageIcon("static/LoginImages/s_busy.png"));
+        busyState = new JMenuItem("忙碌", new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                "/LoginImages/s_busy.png"))));
         busyState.addActionListener(setState);
-        hideState = new JMenuItem("隐身", new ImageIcon("static/LoginImages/s_hide.png"));
+        hideState = new JMenuItem("隐身", new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                "/LoginImages/s_hide.png"))));
         hideState.addActionListener(setState);
         states.add(onlineState);
         states.addSeparator();
@@ -398,19 +387,6 @@ public class QQLoginFrame extends CenterFrame {
     }
 
     /**
-     * 是否可以拖拽
-     */
-    protected boolean isDragged;
-    /**
-     * 临时变量
-     */
-    private Point tempPoint = null;
-    /**
-     * 位置
-     */
-    private Point location = null;
-
-    /**
      * 设置我们的面板可以移动,
      */
     private void setDragable() {
@@ -431,12 +407,38 @@ public class QQLoginFrame extends CenterFrame {
         this.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent e) {
                 if (isDragged) {
-                    location = new Point(QQLoginFrame.this.getLocation().x + e.getX() - tempPoint.x,
-                            QQLoginFrame.this.getLocation().y + e.getY() - tempPoint.y);
+                    location = new Point(QQLoginFrame.this.getLocation().x + e.getX() - tempPoint.x, QQLoginFrame.this.getLocation().y + e.getY() - tempPoint.y);
                     QQLoginFrame.this.setLocation(location);
                 }
             }
         });
+    }
+
+    /**
+     * 登陆检测, 主要是验证密码和用户名是否正确
+     */
+    private void loginCheck() {
+        if ("".equals(userName.getText()) || userName.getText() == null || "QQ/手机/邮箱".equals(userName.getText())) {
+            JOptionPane.showMessageDialog(loginPanel, "qq号码为空");
+        }
+        if ("".equals(String.valueOf(passwordField.getPassword())) || passwordField.getPassword() == null) {
+            JOptionPane.showMessageDialog(loginPanel, "请输入密码");
+        } else {
+            String qqNumber = userName.getText();
+            String qqPassword = String.valueOf(passwordField.getPassword());
+            QQ loginCheck = QQLoginController.getQqLoginController().loginCheck(qqNumber, qqPassword);
+            if (loginCheck == null) {
+                JOptionPane.showMessageDialog(loginPanel, "用户名或密码错误, 请重新输入");
+                passwordField.setText("");
+                userName.grabFocus();
+            } else {
+                JOptionPane.showMessageDialog(loginPanel, "登陆成功");
+                // TODO 登陆成功
+                QQLoginFrame.this.dispose();
+                systemTray.remove(trayIcon);
+                new QQMainFrame(loginCheck);
+            }
+        }
     }
 
     /**
@@ -474,11 +476,14 @@ public class QQLoginFrame extends CenterFrame {
         @Override
         public void mouseEntered(MouseEvent e) {
             if (e.getSource() == close) {
-                close.setIcon(new ImageIcon("static/LoginImages/loginclose.png"));
+                close.setIcon(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static/LoginImages" +
+                        "/loginclose.png"))));
             } else if (e.getSource() == minimize) {
-                minimize.setIcon(new ImageIcon("static/LoginImages/loginMin.png"));
+                minimize.setIcon(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                        "/LoginImages/loginMin.png"))));
             } else if (e.getSource() == pop) {
-                pop.setIcon(new ImageIcon("static/LoginImages/loginpop.png"));
+                pop.setIcon(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static/LoginImages" +
+                        "/loginpop.png"))));
             }
         }
 
@@ -530,15 +535,19 @@ public class QQLoginFrame extends CenterFrame {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == onlineState) {
                 // 点击菜单项改变这个用户的状态
-                stateSelect.setIcon(new ImageIcon("static/LoginImages/s_online.png"));
+                stateSelect.setIcon(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                        "/LoginImages/s_online.png"))));
             } else if (e.getSource() == hideState) {
-                stateSelect.setIcon(new ImageIcon("static/LoginImages/s_hide.png"));
+                stateSelect.setIcon(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                        "/LoginImages/s_hide.png"))));
 
             } else if (e.getSource() == busyState) {
-                stateSelect.setIcon(new ImageIcon("static/LoginImages/s_busy.png"));
+                stateSelect.setIcon(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                        "/LoginImages/s_busy.png"))));
 
             } else if (e.getSource() == leaveState) {
-                stateSelect.setIcon(new ImageIcon("static/LoginImages/s_leave.png"));
+                stateSelect.setIcon(new ImageIcon(Objects.requireNonNull(QQCloudFrame.class.getResource("/static" +
+                        "/LoginImages/s_leave.png"))));
             }
         }
     }
@@ -580,33 +589,6 @@ public class QQLoginFrame extends CenterFrame {
                 if ("".equals(userName.getText())) {
                     userName.setText("QQ/手机/邮箱");
                 }
-            }
-        }
-    }
-
-    /**
-     * 登陆检测, 主要是验证密码和用户名是否正确
-     */
-    private void loginCheck() {
-        if ("".equals(userName.getText()) || userName.getText() == null || "QQ/手机/邮箱".equals(userName.getText())) {
-            JOptionPane.showMessageDialog(loginPanel, "qq号码为空");
-        }
-        if ("".equals(String.valueOf(passwordField.getPassword())) || passwordField.getPassword() == null) {
-            JOptionPane.showMessageDialog(loginPanel, "请输入密码");
-        } else {
-            String qqNumber = userName.getText();
-            String qqPassword = String.valueOf(passwordField.getPassword());
-            QQ loginCheck = QQLoginController.getQqLoginController().loginCheck(qqNumber, qqPassword);
-            if (loginCheck == null) {
-                JOptionPane.showMessageDialog(loginPanel, "用户名或密码错误, 请重新输入");
-                passwordField.setText("");
-                userName.grabFocus();
-            } else {
-                JOptionPane.showMessageDialog(loginPanel, "登陆成功");
-                // TODO 登陆成功
-                QQLoginFrame.this.dispose();
-                systemTray.remove(trayIcon);
-                new QQMainFrame(loginCheck);
             }
         }
     }

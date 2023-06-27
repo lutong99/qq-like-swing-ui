@@ -15,6 +15,6 @@ public interface QQRegisterDAO extends QQDAO {
      * @param qq 没有密码的QQ对象
      * @return 我们已经注册成功的QQ号码的字符串
      */
-    public abstract String registerQQ(QQ qq);
+     String registerQQ(QQ qq);
 
 }
