@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Objects;
+import java.util.Properties;
 
 /**
  * qq 登陆完成的主界面, 包括消息列表, 好友列表, 还有游戏呀, 云呀, 查找好友等等的一些小功能
@@ -672,8 +673,10 @@ public class QQMainFrame extends CenterFrame {
             if (e.getSource() == qqGameJLabel) {
                 new QQGameSelectorFrame();
             } else if (e.getSource() == qqMusicJLabel) {
-                String cmd = "F:\\Program Files (x86)\\Tencent\\QQMusic\\QQMusic.exe";
+                Properties config = new Properties();
                 try {
+                    config.load(QQMainFrame.class.getResourceAsStream("/config.properties"));
+                    String cmd = config.getProperty("music.path");
                     Runtime.getRuntime().exec(cmd);
                 } catch (IOException e1) {
                     e1.printStackTrace();
