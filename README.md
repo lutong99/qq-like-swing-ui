@@ -4,6 +4,8 @@
 
 Java 简单的GUI项目, 模仿的腾讯QQ, 主要是为了熟悉面向对象与三层架构, 另外还有MVC模式
 
+现在看来是非常低级的程序操作，但是对于一个刚刚学会JavaSE 和 JDBC 的普通人来说，确实是一个非常值得挑战的工作，至少是培养了写代码的耐心。过了耐心这一关，对待什么都会好的，另外还要讲究方式方法
+
 # 项目
 
 ## 功能需求
@@ -72,7 +74,7 @@ Java 简单的GUI项目, 模仿的腾讯QQ, 主要是为了熟悉面向对象与
 - 用户表qq_table
 
   | 字段名      | 字段类型               | 备注           |
-    | ----------- | ---------------------- | -------------- |
+  | ----------- | ---------------------- | -------------- |
   | qq_id       | int primary key        | qq号码存储的id |
   | qq_number   | int(5) not null unique | qq号码         |
   | qq_nickname | varchar(12)            | 昵称           |
@@ -93,7 +95,7 @@ Java 简单的GUI项目, 模仿的腾讯QQ, 主要是为了熟悉面向对象与
 - qq**friend_table
 
   | 字段名    | 字段类型                       | 备注                     |
-    | --------- | ------------------------------ | ------------------------ |
+  | --------- | ------------------------------ | ------------------------ |
   | id        | int primary key auto_increment | 好友的id                 |
   | qq_number | int(5) not null unique         | 好友的号码(外键qq_table) |
 
@@ -102,9 +104,130 @@ Java 简单的GUI项目, 模仿的腾讯QQ, 主要是为了熟悉面向对象与
 - qq_cloud****
 
   | 字段名      | 字段类型            | 备注                        |
-    | ----------- | ------------------- | --------------------------- |
+  | ----------- | ------------------- | --------------------------- |
   | cloud_id      | int primary key     | 存储的文件id                |
   | cloud_address | varchar(255)        | 存储的文件地址              |
   | cloud_state   | char(1) default '1' | 状态位, 1就存在, 2 就不存在 |
   | cloud_time    | datetime            | 存储日期                    |
 
+
+
+# 使用方法
+
+该项目是一个使用Maven构建的Java项目
+
+## 使用方法
+
+1. 克隆项目到本地：
+
+   ```shell
+   git clone https://github.com/lutong99/qq-like-swing-ui.git
+   ```
+
+2. 进入项目目录：
+
+   ```shell
+   cd qq-like-swing-ui
+   ```
+
+
+3. 根据database 目录下的两个sql 文件进行数据库的创建。
+
+4. 构建项目：
+
+   ```shell
+   mvn clean install
+   ```
+
+5. 运行项目：
+
+   ```shell
+   mvn exec:java -Dexec.mainClass="org.example.main.Main"
+   ```
+
+6. (可选) 生成可执行JAR文件：
+
+   ```shell
+   mvn package
+   ```
+
+   可执行JAR文件将生成在 `target` 目录下。
+
+## 配置
+
+在项目中的 `src/main/resources` 目录下可以找到 `druid.properties` 数据源配置文件。根据需要进行相应的配置修改。
+
+## 文档
+
+demo的部分文档可以在 `docs` 目录中找到。该目录包含了关于项目的更多信息和使用指南。
+
+
+## 使用方法及贴图
+
+- 1、登录界面
+
+  ![登录界面](./images/00login.png)
+
+  当鼠标移动到关闭和最小化时，会触发切颜色变化的效果
+
+  任务栏区
+
+  ![任务栏区](./images/01right-click.png)
+
+- 2、注册界面
+
+
+  ![注册界面](./images/03register.png)
+
+  选择头像
+
+  ![注册头像选择](./images/02register-profile.png)
+
+  信息填写
+
+  ![完整信息填写](./images/04wholeInfo.png)
+
+
+  注册成功
+  
+  ![注册成功](./images/05register-success.png)
+
+
+- 登录成功主界面
+
+  ![登录成功主界面](./images/06login-success.png)
+
+  只有画红线的四个功能可用，其中第二个QQ音乐可以调用本机上的QQMusic 程序，但需要改路径，在`resources/config.properties` 的`music.path` 中。
+
+  任务栏显示的图标和头像是一致的
+
+
+- 微云
+
+  ![微云和上传界面](./images/07wecloud.png)
+
+  是一个列表，可以上传，可以下载，可以删除，图中显示的是上传的框
+
+
+- 游戏选择界面
+
+  ![游戏选择页面](./images/08game-selector.png)
+
+  其中推箱子不可用
+
+  ![捕鱼达人](./images/09fishing.png)
+
+  ![捕鱼达人玩起来](./images/10-fishing.png)
+
+
+## 改进
+
+  如果有时间的话：
+
+  未来考虑，把一些写死的资源动态起来，
+
+  添加一些新的功能。比如查找好友
+
+  好友聊天等。
+
+  
